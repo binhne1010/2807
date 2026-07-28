@@ -1,0 +1,374 @@
+/* Stage 4 - a real rain-soaked bridge. Cold in the air, but never empty of warmth. */
+
+.winter-scene {
+  --stage-4-ink: #253139;
+  --stage-4-blue: #617682;
+  --stage-4-mist: #b3c0c8;
+  --stage-4-lamp: #e5bd7f;
+  --stage-4-muted-pink: #bd8799;
+  --chrome-border: rgba(239, 246, 247, 0.52);
+  --chrome-bg: rgba(38, 52, 60, 0.3);
+  --chrome-text: #f7fbfc;
+  --chrome-bg-hover: rgba(47, 64, 73, 0.55);
+  --cta-bg: #bd8799;
+  --cta-border: rgba(255, 241, 245, 0.62);
+  --cta-text: #fffafb;
+  --cta-shadow: rgba(14, 22, 28, 0.42);
+  --eyebrow-color: #d8e0e2;
+  --title-color: #f4f8f7;
+  --lede-color: rgba(239, 246, 247, 0.88);
+  --progress-color: rgba(234, 242, 243, 0.76);
+  --progress-track: rgba(234, 242, 243, 0.24);
+  --progress-fill: var(--stage-4-lamp);
+  --vignette-color: rgba(17, 26, 32, 0.48);
+  --placeholder-bg: #647681;
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding: clamp(4.65rem, 7vw, 6.2rem) clamp(1.2rem, 5vw, 5.25rem) clamp(2rem, 5vh, 4rem);
+  background: var(--stage-4-ink);
+  color: var(--chrome-text);
+}
+
+.winter-media,
+.winter-wash,
+.winter-lamp-bloom,
+.winter-drizzle,
+.winter-mist {
+  position: absolute;
+  pointer-events: none;
+}
+
+.winter-media {
+  z-index: -6;
+  inset: 0;
+}
+
+.winter-image {
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.8) contrast(0.96) brightness(0.82);
+  transform: scale(1.02);
+}
+
+.winter-wash {
+  z-index: -5;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(19, 31, 37, 0.78) 0%, rgba(25, 37, 44, 0.56) 34%, rgba(25, 37, 44, 0.16) 66%, rgba(16, 25, 31, 0.22) 100%),
+    linear-gradient(0deg, rgba(14, 23, 29, 0.48), transparent 42%);
+}
+
+.winter-lamp-bloom {
+  z-index: -4;
+  top: 13%;
+  right: 18%;
+  width: min(34vw, 31rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(235, 194, 125, 0.22), rgba(235, 194, 125, 0.06) 35%, transparent 67%);
+  filter: blur(7px);
+  animation: winter-lamp-breathe 7s ease-in-out infinite;
+}
+
+@keyframes winter-lamp-breathe {
+  50% { opacity: 0.64; transform: scale(1.08); }
+}
+
+.winter-drizzle {
+  z-index: -2;
+  inset: 0;
+  overflow: hidden;
+}
+
+.winter-drizzle span {
+  position: absolute;
+  top: -12%;
+  left: calc(4% + var(--i) * 8%);
+  width: 1px;
+  height: clamp(32px, 7vh, 68px);
+  background: linear-gradient(180deg, transparent, rgba(218, 233, 235, 0.42));
+  opacity: 0.72;
+  transform: rotate(10deg);
+  animation: winter-drizzle-fall 3.6s linear infinite;
+  animation-delay: calc(var(--i) * -0.31s);
+  will-change: transform;
+}
+
+@keyframes winter-drizzle-fall {
+  to { transform: translate3d(-30px, 118dvh, 0) rotate(10deg); }
+}
+
+.winter-mist {
+  z-index: -1;
+  right: -12%;
+  bottom: -7%;
+  left: -14%;
+  height: 34vh;
+  background: radial-gradient(ellipse at 38% 80%, rgba(216, 229, 231, 0.23), transparent 64%);
+  filter: blur(16px);
+  opacity: 0.78;
+  animation: winter-mist-drift 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes winter-mist-drift {
+  to { transform: translate3d(5%, -4%, 0) scale(1.08); }
+}
+
+.winter-header {
+  position: relative;
+  z-index: 2;
+  width: min(35rem, 100%);
+  padding-top: clamp(0.25rem, 1.4vh, 1rem);
+}
+
+.winter-header .scene-title {
+  max-width: 11ch;
+  margin-bottom: 0.36em;
+  font-size: clamp(3rem, 5.4vw, 5.55rem);
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+  text-shadow: 0 5px 30px rgba(12, 20, 25, 0.36);
+}
+
+.winter-header .scene-lede {
+  max-width: 31rem;
+  margin: 0;
+  font-size: clamp(1rem, 1.22vw, 1.12rem);
+  line-height: 1.65;
+  text-wrap: pretty;
+  text-shadow: 0 2px 22px rgba(12, 20, 25, 0.5);
+}
+
+.winter-status {
+  margin: 1rem 0 0;
+  color: rgba(231, 241, 242, 0.7);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.winter-conversations {
+  position: relative;
+  z-index: 2;
+  width: min(38rem, 100%);
+  margin-top: clamp(2.5rem, 7vh, 5.8rem);
+}
+
+.winter-instruction {
+  margin: 0 0 1.2rem;
+  color: rgba(232, 240, 241, 0.7);
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.winter-phrases {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.winter-phrase {
+  display: block;
+  width: fit-content;
+  max-width: min(31rem, 100%);
+  border: 0;
+  border-bottom: 1px solid rgba(232, 240, 241, 0.26);
+  padding: 0.68rem 0.18rem 0.68rem 0;
+  background: none;
+  color: rgba(246, 250, 250, 0.88);
+  cursor: pointer;
+  font: inherit;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: left;
+  text-shadow: 0 2px 14px rgba(11, 18, 23, 0.55);
+  transform: translateX(calc(var(--phrase-index) * 1.45rem));
+  transition: color 240ms var(--scene-ease), border-color 240ms var(--scene-ease), transform 240ms var(--scene-ease);
+  animation: winter-phrase-in 0.8s var(--scene-ease) both;
+  animation-delay: calc(var(--phrase-index) * 100ms + 180ms);
+}
+
+.winter-phrase:hover,
+.winter-phrase:focus-visible {
+  border-color: rgba(239, 198, 127, 0.88);
+  color: #fffdf8;
+  outline: none;
+  transform: translateX(calc(var(--phrase-index) * 1.45rem + 0.3rem));
+}
+
+.winter-phrase:focus-visible {
+  box-shadow: 0 3px 0 var(--stage-4-lamp);
+}
+
+.winter-phrase.is-opened {
+  border-color: rgba(225, 181, 119, 0.58);
+  color: #fff6e4;
+}
+
+.winter-phrase.is-unresolved.is-opened {
+  border-bottom-style: dashed;
+}
+
+@keyframes winter-phrase-in {
+  from { opacity: 0; transform: translate3d(calc(var(--phrase-index) * 1.45rem - 12px), 8px, 0); }
+  to { opacity: 1; transform: translate3d(calc(var(--phrase-index) * 1.45rem), 0, 0); }
+}
+
+.winter-photo-memory {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.winter-umbrella-hint {
+  position: absolute;
+  z-index: 3;
+  bottom: clamp(2.5rem, 7vh, 5rem);
+  left: 50%;
+  margin: 0;
+  color: rgba(255, 248, 233, 0.88);
+  font-size: clamp(0.78rem, 1vw, 0.9rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  text-align: center;
+  text-shadow: 0 2px 14px rgba(9, 17, 22, 0.9);
+  transform: translateX(-50%);
+}
+.winter-photo-memory:focus-visible {
+  outline: 2px solid rgba(255, 236, 201, 0.86);
+  outline-offset: -12px;
+}
+.winter-complete {
+  position: absolute;
+  z-index: 2;
+  right: clamp(1.2rem, 6vw, 7rem);
+  bottom: clamp(1.55rem, 4vh, 3rem);
+  display: grid;
+  width: min(24rem, calc(100vw - 2.4rem));
+  gap: 0.85rem;
+  justify-items: start;
+}
+
+.winter-complete p {
+  margin: 0;
+  color: #f5f8f7;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.04rem, 1.55vw, 1.25rem);
+  line-height: 1.43;
+  text-shadow: 0 3px 22px rgba(11, 18, 23, 0.65);
+}
+
+.tone-winter {
+  --modal-bg: #263942;
+  --modal-text: #f7fbfa;
+  --modal-border: rgba(222, 239, 238, 0.5);
+  --modal-close-bg: #f9edf0;
+  --modal-ink: #f7fbfa;
+  --modal-muted: #c8d7d9;
+  --modal-accent: #d69aaa;
+}
+.winter-dialogue {
+  display: grid;
+  gap: 1rem;
+  padding: 0.3rem 0 0.6rem;
+}
+
+.winter-dialogue p {
+  max-width: 28ch;
+  margin: 0;
+  color: var(--modal-ink);
+  font-family: var(--font-hand), "Segoe Script", cursive;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 1.35;
+}
+
+.winter-dialogue span {
+  color: var(--modal-muted);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.winter-memory-letter {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 52rem;
+  margin-bottom: 1.25rem;
+}
+
+.winter-memory-letter p {
+  margin: 0;
+  color: var(--modal-ink);
+  line-height: 1.6;
+}
+
+.winter-memory-modal .memory-gallery {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 767px) {
+  .winter-scene {
+    min-height: 100dvh;
+    overflow-y: auto;
+    padding: 4.65rem 1.15rem 2rem;
+  }
+
+  .winter-image { object-position: 60% center; }
+
+  .winter-wash {
+    background: linear-gradient(180deg, rgba(18, 30, 37, 0.64), rgba(19, 31, 37, 0.52) 48%, rgba(14, 24, 29, 0.8));
+  }
+
+  .winter-header .scene-title {
+    max-width: 8ch;
+    font-size: clamp(3rem, 14vw, 4.2rem);
+  }
+
+  .winter-conversations {
+    margin-top: 2.8rem;
+    padding-bottom: 12rem;
+  }
+
+  .winter-phrase,
+  .winter-phrase:hover,
+  .winter-phrase:focus-visible {
+    max-width: 100%;
+    transform: none;
+  }
+
+  @keyframes winter-phrase-in {
+    from { opacity: 0; transform: translate3d(-10px, 8px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+
+  .winter-complete {
+    right: 1.15rem;
+    bottom: 1.5rem;
+    left: 1.15rem;
+    width: auto;
+  }
+
+  .winter-memory-modal .memory-gallery {
+    grid-template-columns: none;
+  }
+
+  .winter-drizzle span:nth-child(even) { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .winter-drizzle span,
+  .winter-mist,
+  .winter-phrase {
+    animation: none;
+  }
+
+  .winter-phrase {
+    transition: none;
+  }
+}

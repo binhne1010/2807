@@ -1,0 +1,363 @@
+/* Stage 8 — a wide flower field at first light. Calm, spacious, lots of breathing room. */
+
+.field-scene {
+  --stage-8-sky: #f4d7e2;
+  --stage-8-field: #d9b4c2;
+  --stage-8-flower: #eaafc4;
+  --stage-8-cream: #fff5ef;
+  --stage-8-light: #ffe5c7;
+  --stage-8-text: #59434c;
+
+  --chrome-border: rgba(173, 118, 141, 0.38);
+  --chrome-bg: rgba(255, 250, 251, 0.82);
+  --chrome-text: #75505f;
+  --cta-bg: var(--pink-deep);
+  --cta-border: #f6d7e2;
+  --cta-text: #fffafd;
+  --cta-shadow: rgba(160, 92, 122, 0.28);
+  --eyebrow-color: #a9708a;
+  --title-color: var(--stage-8-text);
+  --lede-color: #6d5560;
+  --placeholder-bg: #dcc0cb;
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: 100dvh;
+  overflow: hidden;
+  align-content: center;
+  justify-items: center;
+  padding: clamp(4.5rem, 9vw, 6.5rem) clamp(1.15rem, 5vw, 5rem) clamp(1.5rem, 4vw, 3rem);
+  background: var(--stage-8-sky);
+  color: var(--stage-8-text);
+}
+
+.field-sky {
+  position: absolute;
+  z-index: -6;
+  inset: 0;
+  background: linear-gradient(180deg, #fbe7ee 0%, var(--stage-8-sky) 34%, #f6dfd6 62%, var(--stage-8-light) 100%);
+}
+
+.field-sun {
+  position: absolute;
+  z-index: -6;
+  top: 8%;
+  left: 50%;
+  width: min(56vw, 620px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 245, 232, 0.9) 0 12%, rgba(255, 229, 199, 0.5) 32%, transparent 66%);
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: field-sun-breathe 14s ease-in-out infinite alternate;
+}
+
+@keyframes field-sun-breathe {
+  to {
+    opacity: 0.86;
+    transform: translateX(-50%) scale(1.06);
+  }
+}
+
+.field-hills {
+  position: absolute;
+  z-index: -5;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 52vh;
+  pointer-events: none;
+}
+
+.field-hills span {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+.field-hills span:nth-child(1) {
+  left: -14%;
+  width: 74%;
+  height: 62%;
+  background: linear-gradient(180deg, rgba(228, 190, 203, 0.9), var(--stage-8-field));
+}
+
+.field-hills span:nth-child(2) {
+  right: -16%;
+  width: 78%;
+  height: 52%;
+  background: linear-gradient(180deg, rgba(221, 178, 192, 0.92), #cfa5b5);
+}
+
+.field-hills span:nth-child(3) {
+  left: 18%;
+  width: 70%;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(214, 168, 183, 0.95), #c99cad);
+}
+
+.field-tree {
+  position: absolute;
+  z-index: -4;
+  right: 9%;
+  bottom: 26vh;
+  width: 8px;
+  height: 20vh;
+  background: linear-gradient(90deg, #8f6a58, #6f4f41);
+  pointer-events: none;
+}
+
+.field-tree::after {
+  position: absolute;
+  bottom: 88%;
+  left: 50%;
+  width: min(26vw, 260px);
+  aspect-ratio: 1.5;
+  border-radius: 50%;
+  background: radial-gradient(circle at 42% 40%, rgba(255, 231, 240, 0.95) 0 18%, rgba(236, 178, 199, 0.9) 46%, rgba(214, 152, 176, 0.8) 78%);
+  box-shadow: 0 18px 40px rgba(150, 92, 118, 0.2);
+  content: "";
+  transform: translateX(-50%);
+  animation: tree-sway 11s ease-in-out infinite alternate;
+}
+
+@keyframes tree-sway {
+  to {
+    transform: translateX(-50%) rotate(1.6deg);
+  }
+}
+
+/* A small path leading into the middle of the field. */
+.field-path {
+  position: absolute;
+  z-index: -3;
+  bottom: 0;
+  left: 50%;
+  width: 42%;
+  height: 34vh;
+  background: linear-gradient(180deg, rgba(255, 245, 239, 0.1), rgba(255, 245, 239, 0.62));
+  clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.field-flowers {
+  position: absolute;
+  z-index: -2;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 40vh;
+  pointer-events: none;
+}
+
+.field-flowers span {
+  position: absolute;
+  bottom: calc(2% + (var(--i) % 5) * 7%);
+  left: calc(1% + var(--i) * 5.6%);
+  width: calc(16px - (var(--i) % 5) * 1.4px);
+  height: calc(16px - (var(--i) % 5) * 1.4px);
+  border-radius: 50%;
+  /* Five-petal bloom drawn with overlapping radial gradients. */
+  background: radial-gradient(circle, var(--stage-8-flower) 0 24%, transparent 26%),
+    radial-gradient(circle at 50% 0, #fff4f8 0 26%, transparent 28%),
+    radial-gradient(circle at 100% 50%, #fff4f8 0 26%, transparent 28%),
+    radial-gradient(circle at 50% 100%, #fff4f8 0 26%, transparent 28%),
+    radial-gradient(circle at 0 50%, #fff4f8 0 26%, transparent 28%);
+  filter: drop-shadow(0 3px 5px rgba(160, 96, 126, 0.14));
+  transform-origin: 50% 100%;
+  animation: flower-nod 6.5s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.42s);
+}
+
+@keyframes flower-nod {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(4deg); }
+}
+
+.field-petals {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.field-petals span {
+  position: absolute;
+  top: -5%;
+  left: calc(var(--i) * 8.4%);
+  width: 12px;
+  height: 12px;
+  border-radius: 62% 0 62% 0;
+  background: rgba(234, 175, 196, 0.76);
+  animation: petal-cross 16s linear infinite;
+  animation-delay: calc(var(--i) * -1.3s);
+}
+
+/* Petals ease off as the gift opens, and hold still for the video. */
+.field-scene.is-slowing .field-petals span {
+  animation-duration: 34s;
+  transition: animation-duration 1.2s linear;
+}
+
+.field-scene.is-still .field-petals span,
+.field-scene.is-still .field-flowers span {
+  animation-play-state: paused;
+}
+
+@keyframes petal-cross {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+  10%, 86% { opacity: 0.8; }
+  100% { opacity: 0; transform: translate3d(-90px, 110vh, 0) rotate(400deg); }
+}
+
+.field-seats {
+  position: absolute;
+  z-index: -2;
+  bottom: 17vh;
+  left: 16%;
+  display: flex;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.field-seats span {
+  width: 44px;
+  height: 30px;
+  border-radius: 5px 5px 2px 2px;
+  background: linear-gradient(180deg, #c9a58c, #a67f66);
+  box-shadow: 0 8px 16px rgba(140, 92, 110, 0.2);
+}
+
+.field-seats span::after {
+  position: absolute;
+  bottom: 100%;
+  width: 44px;
+  height: 26px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, #d3b09a, #b98f76);
+  content: "";
+}
+
+.field-invite {
+  position: relative;
+  z-index: 16;
+  display: grid;
+  width: min(640px, 100%);
+  gap: 0.35rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.field-title {
+  font-size: var(--title-hero);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.field-invite .scene-lede {
+  margin-top: 0.7rem;
+}
+
+.field-cta {
+  margin-top: 1.9rem;
+}
+
+.field-gift-layer,
+.field-video-layer,
+.field-letter-layer {
+  position: relative;
+  z-index: 16;
+  display: grid;
+  width: 100%;
+  place-items: center;
+}
+
+/* The scene darkens slightly so the video becomes the centre of attention. */
+.field-scene.phase-video::after,
+.field-scene.phase-letter::after {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  background: rgba(74, 46, 60, 0.42);
+  content: "";
+  pointer-events: none;
+  animation: field-dim 1.2s var(--scene-ease) both;
+}
+
+@keyframes field-dim {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 767px) {
+  .field-scene {
+    padding: 4.4rem 1.1rem 2rem;
+  }
+
+  .field-tree {
+    right: 4%;
+    bottom: 30vh;
+  }
+
+  .field-seats {
+    bottom: 14vh;
+    left: 8%;
+  }
+
+  .field-flowers span:nth-child(even) {
+    display: none;
+  }
+
+  .field-petals span:nth-child(even) {
+    display: none;
+  }
+
+  .field-cta {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field-sun,
+  .field-tree::after,
+  .field-flowers span,
+  .field-petals span {
+    animation: none;
+  }
+}
+
+/* Stage 8 refinement: a single natural field scene replaces the bare CSS trees and blocky figures. */
+.field-scene .field-sky {
+  z-index: -7;
+  background: linear-gradient(180deg, rgba(104, 62, 81, 0.04), rgba(234, 177, 188, 0.12) 48%, rgba(134, 91, 104, 0.18)), url("/images/stage-8/birthday-field-silhouette.png") center / cover no-repeat;
+}
+.field-scene .field-sky::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 232, 240, 0.1), transparent 34%, rgba(113, 72, 92, 0.16) 100%);
+  content: "";
+}
+.field-scene .field-hills,
+.field-scene .field-tree,
+.field-scene .field-path,
+.field-scene .field-seats { display: none; }
+.field-scene .field-sun { z-index: -5; opacity: 0.74; mix-blend-mode: screen; }
+.field-scene .field-flowers { z-index: 1; height: 29vh; opacity: 0.72; }
+.field-scene .field-petals { z-index: 3; }
+.field-fireflies { position: absolute; z-index: 2; inset: 0; overflow: hidden; pointer-events: none; }
+.field-fireflies span { position: absolute; top: calc(24% + (var(--i) % 6) * 9%); left: calc(3% + (var(--i) * 8.8%)); width: 5px; height: 5px; border-radius: 50%; background: #fff2a7; box-shadow: 0 0 0 2px rgba(255, 235, 145, 0.1), 0 0 15px 5px rgba(255, 225, 115, 0.42); animation: field-firefly 4.8s ease-in-out infinite alternate; animation-delay: calc(var(--i) * -0.29s); }
+@keyframes field-firefly { 0% { opacity: 0.18; transform: translate3d(0, 0, 0) scale(0.72); } 42% { opacity: 1; transform: translate3d(14px, -18px, 0) scale(1.08); } 100% { opacity: 0.34; transform: translate3d(-8px, -36px, 0) scale(0.8); } }
+.field-invite { padding: 1rem 1.3rem; border-radius: 22px; text-shadow: 0 2px 16px rgba(255, 247, 241, 0.42); }
+.field-invite .scene-eyebrow { color: #9b5c79; }
+.field-invite .scene-title { color: #503946; text-shadow: 0 2px 17px rgba(255, 248, 244, 0.76); }
+.field-invite .scene-lede { color: #634a57; text-shadow: 0 1px 12px rgba(255, 248, 244, 0.74); }
+.field-scene.is-still .field-fireflies span { animation-play-state: paused; }
+@media (max-width: 767px) {
+  .field-scene .field-sky { background-position: 58% center; }
+  .field-fireflies span:nth-child(3n) { display: none; }
+  .field-invite { padding: 0.8rem; }
+}
+@media (prefers-reduced-motion: reduce) { .field-fireflies span { animation: none; } }

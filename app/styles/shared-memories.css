@@ -1,0 +1,271 @@
+/* Reusable memory primitives: photo slots, video slots, modal, gallery, letters. */
+
+.memory-image {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--placeholder-bg, #e3d3d9);
+}
+
+.memory-image img {
+  object-fit: cover;
+}
+
+.memory-image.is-placeholder img {
+  filter: saturate(0.55) contrast(0.92) brightness(1.04);
+}
+
+.memory-image-hint {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0.45rem 0.5rem;
+  background: linear-gradient(0deg, rgba(60, 38, 48, 0.72), transparent);
+  color: rgba(255, 249, 251, 0.92);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.memory-video {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  background: #3d3338;
+}
+
+.memory-video-empty {
+  position: relative;
+  display: grid;
+  min-height: 220px;
+  overflow: hidden;
+  place-items: center;
+  border-radius: 10px;
+  background: #3d3338;
+}
+
+.memory-video-empty img {
+  object-fit: cover;
+  opacity: 0.55;
+}
+
+.memory-video-empty p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 0 1rem;
+  color: #fff9fb;
+  font-size: 0.94rem;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- Modal ---------- */
+
+.memory-modal-root {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: grid;
+  padding: clamp(1rem, 4vw, 3rem);
+  place-items: center;
+}
+
+.memory-modal-scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(38, 24, 31, 0.55);
+  cursor: pointer;
+  /* Blur signals that the background is dismissible. */
+  backdrop-filter: blur(9px);
+}
+
+.memory-modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(660px, 100%);
+  max-height: min(86dvh, 780px);
+  overflow-y: auto;
+  border: 1px solid var(--modal-border, rgba(214, 158, 182, 0.42));
+  border-radius: 18px;
+  padding: clamp(1.5rem, 3.4vw, 2.5rem);
+  background: var(--modal-bg, rgba(255, 253, 254, 0.97));
+  box-shadow: 0 34px 90px rgba(58, 32, 45, 0.35);
+  color: var(--modal-text, var(--text-primary));
+  overscroll-behavior: contain;
+}
+
+.memory-modal-panel:focus-visible {
+  outline: 3px solid var(--pink-deep);
+  outline-offset: 3px;
+}
+
+.memory-modal-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--modal-border, rgba(214, 158, 182, 0.36));
+  border-radius: 50%;
+  background: var(--modal-close-bg, rgba(255, 241, 246, 0.9));
+  color: inherit;
+  cursor: pointer;
+  transition: transform var(--dur-hover) var(--scene-ease), background var(--dur-hover) ease;
+}
+
+.memory-modal-close:hover {
+  transform: rotate(90deg);
+  background: var(--pink-soft);
+}
+
+.memory-modal-title {
+  margin: 0 2.6rem 1.1rem 0;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.55rem, 2.6vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.14;
+}
+
+.memory-modal-body {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.memory-modal-body p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.72;
+}
+
+.memory-modal-body .memory-image {
+  aspect-ratio: 1.4;
+  border-radius: 12px;
+}
+
+/* ---------- Gallery ---------- */
+
+.memory-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.7rem;
+}
+
+.memory-gallery-item {
+  margin: 0;
+  animation: gallery-item-in 0.7s var(--scene-ease) both;
+  animation-delay: var(--item-delay, 0ms);
+}
+
+.memory-gallery-item .memory-image {
+  aspect-ratio: 1;
+  border: 4px solid var(--warm-white);
+  border-radius: 6px;
+  box-shadow: 0 12px 26px rgba(104, 62, 82, 0.18);
+  transition: transform 0.5s var(--scene-ease), box-shadow 0.4s ease;
+}
+
+.memory-gallery-item:hover .memory-image {
+  transform: translateY(-4px) rotate(-1deg);
+  box-shadow: 0 18px 34px rgba(104, 62, 82, 0.26);
+}
+
+@keyframes gallery-item-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* ---------- Letters ---------- */
+
+.letter-reveal {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.letter-reveal p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.letter-reveal.is-body p {
+  font-size: var(--body-large);
+  font-weight: 500;
+  line-height: 1.74;
+}
+
+.letter-reveal.is-hand p {
+  font-family: var(--font-hand), "Segoe Script", cursive;
+  font-size: clamp(1.35rem, 2.1vw, 1.85rem);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  /* Long content becomes a bottom sheet on small screens. */
+  .memory-modal-root {
+    padding: 0;
+    place-items: end stretch;
+  }
+
+  .memory-modal-panel {
+    width: 100%;
+    max-height: 88dvh;
+    border-bottom: 0;
+    border-radius: 20px 20px 0 0;
+    padding: 1.4rem 1.15rem calc(1.4rem + env(safe-area-inset-bottom));
+  }
+
+  .memory-gallery {
+    grid-auto-flow: column;
+    grid-auto-columns: 62%;
+    grid-template-columns: none;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .memory-gallery-item {
+    scroll-snap-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-gallery-item {
+    animation: none;
+  }
+  .memory-modal-close:hover,
+  .memory-gallery-item:hover .memory-image {
+    transform: none;
+  }
+}
+
+/* Keep rounded dialogs clean: the content scrolls, not the rounded outer shell. */
+.memory-modal-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.memory-modal-body {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: .15rem;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.memory-modal-body::-webkit-scrollbar { display: none; }

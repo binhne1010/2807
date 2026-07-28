@@ -1,0 +1,14 @@
+/* Cascade order matters: foundation defines tokens, legacy-scenes holds the
+   original intro/map/stage-1/stage-2 rules, and polish loads last so refinements win. */
+@import "./styles/foundation.css";
+@import "./styles/legacy-scenes.css";
+@import "./styles/shared-memories.css";
+@import "./styles/stage-3-birthday.css";
+@import "./styles/stage-4-winter.css";
+@import "./styles/stage-5-recovery.css";
+@import "./styles/stage-6-tet.css";
+@import "./styles/stage-7-fire.css";
+@import "./styles/stage-8-field.css";
+@import "./styles/finale.css";
+@import "./styles/polish.css";
+@import "./styles/mobile-experience.css";

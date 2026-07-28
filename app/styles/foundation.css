@@ -1,0 +1,260 @@
+/* Design tokens straight from the project brief, plus the primitives every scene reuses. */
+
+:root {
+  --pink-primary: #e9a9bf;
+  --pink-soft: #f7d6e1;
+  --pink-light: #fff1f6;
+  --pink-deep: #c97e99;
+
+  --cream: #fff7f0;
+  --warm-white: #fffdfc;
+  --peach: #f5c9b8;
+  --lavender: #d9cee8;
+
+  --green-light: #b9c9a5;
+  --green-natural: #718662;
+  --green-deep: #3e5140;
+
+  --brown-light: #c8a584;
+  --brown-wood: #765641;
+  --brown-dark: #44352e;
+
+  --winter-blue: #aebecc;
+  --winter-grey: #79858c;
+  --night-blue: #202632;
+  --night-purple: #353044;
+
+  --fire-light: #f2b66d;
+  --fire-deep: #c97145;
+
+  --text-primary: #493b40;
+  --text-secondary: #74636a;
+  --text-light: #fff9fb;
+  --text-muted: #a49399;
+
+  --path-locked: #cfc8cb;
+  --path-active: #e9a9bf;
+  --path-completed: #c97e99;
+
+  /* Typography scale */
+  --title-hero: clamp(46px, 7vw, 90px);
+  --title-scene: clamp(34px, 5vw, 64px);
+  --title-section: clamp(26px, 3vw, 42px);
+  --body-large: clamp(17px, 1.5vw, 21px);
+  --body-base: 16px;
+  --caption: 13px;
+
+  /* Motion */
+  --scene-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --cinematic-ease: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur-hover: 240ms;
+  --dur-reveal: 860ms;
+  --dur-modal: 700ms;
+  --dur-scene: 1500ms;
+}
+
+/* Font families are injected by next/font in app/layout.tsx. */
+body {
+  font-family: var(--font-body), "Segoe UI", system-ui, sans-serif;
+  font-feature-settings: "kern" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+}
+
+.font-hand {
+  font-family: var(--font-hand), "Segoe Script", cursive;
+}
+
+/* ---------- Shared scene chrome ---------- */
+
+/* Every stage renders the same back / continue affordances so navigation stays predictable. */
+.scene-back {
+  position: absolute;
+  z-index: 20;
+  top: clamp(1rem, 3vw, 2rem);
+  left: clamp(1rem, 3vw, 2rem);
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--chrome-border, rgba(183, 115, 143, 0.42));
+  border-radius: 12px;
+  padding: 0.58rem 0.9rem;
+  background: var(--chrome-bg, rgba(255, 253, 254, 0.8));
+  box-shadow: 0 10px 26px rgba(120, 72, 96, 0.14);
+  color: var(--chrome-text, #765267);
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: transform var(--dur-hover) var(--scene-ease), background var(--dur-hover) ease;
+  backdrop-filter: blur(10px);
+}
+
+.scene-back:hover {
+  transform: translateY(-2px);
+  background: var(--chrome-bg-hover, rgba(255, 255, 255, 0.95));
+}
+
+.scene-back svg {
+  flex: 0 0 auto;
+}
+
+/* Primary continue button. Each stage recolours it with local custom properties. */
+.scene-cta {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1px solid var(--cta-border, #f3c6d7);
+  border-radius: 12px;
+  padding: 0.78rem 1.35rem;
+  background: var(--cta-bg, var(--pink-deep));
+  box-shadow: 0 14px 30px var(--cta-shadow, rgba(165, 86, 119, 0.24));
+  color: var(--cta-text, #fffafd);
+  cursor: pointer;
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  transition: transform var(--dur-hover) var(--scene-ease), box-shadow var(--dur-hover) ease,
+    filter var(--dur-hover) ease;
+}
+
+.scene-cta:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 38px var(--cta-shadow, rgba(165, 86, 119, 0.3));
+  filter: brightness(1.05);
+}
+
+.scene-cta:active:not(:disabled) {
+  transform: translateY(0) scale(0.985);
+}
+
+.scene-cta:disabled {
+  cursor: default;
+  filter: saturate(0.5);
+  opacity: 0.65;
+}
+
+/* Eyebrow / title / lede trio shared by all stage headers. */
+.scene-eyebrow {
+  margin: 0 0 0.55rem;
+  color: var(--eyebrow-color, #a26680);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.scene-title {
+  margin: 0;
+  color: var(--title-color, #5b4350);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--title-scene);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.scene-lede {
+  max-width: 40rem;
+  margin: 0.9rem 0 0;
+  color: var(--lede-color, #785765);
+  font-size: var(--body-large);
+  font-weight: 500;
+  line-height: 1.62;
+  text-wrap: pretty;
+}
+
+/* Progress readout used inside stages: "3 / 6 ký ức". */
+.scene-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--progress-color, #8a6675);
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
+
+.scene-progress-track {
+  position: relative;
+  width: 74px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--progress-track, rgba(160, 110, 133, 0.24));
+}
+
+.scene-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: var(--progress-fill, var(--pink-deep));
+  transition: width 700ms var(--scene-ease);
+}
+
+/* Film grain overlay: the single cheapest trick for making flat gradients feel photographed. */
+.scene-grain {
+  position: absolute;
+  z-index: 15;
+  inset: 0;
+  opacity: 0.4;
+  background-image: radial-gradient(rgba(120, 90, 100, 0.16) 0.5px, transparent 0.6px);
+  background-size: 3px 3px;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* Soft vignette to pull attention to the middle of a scene. */
+.scene-vignette {
+  position: absolute;
+  z-index: 14;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, transparent 42%, var(--vignette-color, rgba(78, 48, 62, 0.26)) 100%);
+  pointer-events: none;
+}
+
+/* Screen-reader-only live region. */
+.sr-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Staggered text reveal used by letters and closing messages. */
+.reveal-line {
+  animation: reveal-line var(--dur-reveal) var(--scene-ease) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@keyframes reveal-line {
+  from {
+    opacity: 0;
+    filter: blur(7px);
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-line {
+    animation: none;
+  }
+  .scene-back:hover,
+  .scene-cta:hover:not(:disabled) {
+    transform: none;
+  }
+}

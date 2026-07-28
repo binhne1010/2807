@@ -1,0 +1,1 @@
+Thêm photo-01.jpg đến photo-12.jpg vào thư mục này.

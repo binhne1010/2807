@@ -1,0 +1,793 @@
+/* Loaded last. Upgrades typography across the older scenes and restyles the map
+   world, road and nodes to match the rebuilt journey logic. */
+
+/* ---------- Typography ---------- */
+
+body {
+  font-family: var(--font-body), "Segoe UI", system-ui, sans-serif;
+}
+
+/* Scenes use full-bleed scaled backgrounds and oversized light layers, so the page
+   itself must never scroll sideways (spec §24). */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+/* The display serif carries every scene title. */
+.cafe-content h1,
+.map-header h1,
+.moc-scroll-heading h1,
+.moc-notebook-copy h2,
+.moc-video-copy h2,
+.summer-heading h1,
+.moc-chau-header h1 {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  letter-spacing: -0.022em;
+}
+
+.moc-chau-scene,
+.moc-chau-scene button,
+.moc-chau-scene input,
+.summer-scene,
+.journey-progress strong span,
+.journey-progress > span,
+.node-copy strong,
+.node-copy small,
+.map-guidance {
+  font-family: var(--font-body), "Segoe UI", system-ui, sans-serif;
+}
+
+/* Cormorant/Playfair runs light at large sizes, so titles need less weight than the
+   old Segoe-based rules assumed. */
+.moc-scroll-heading h1,
+.moc-notebook-copy h2,
+.summer-heading h1,
+.moc-video-copy h2 {
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.cafe-content h1 {
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+/* The notebook letter and closing lines read as handwriting. */
+.moc-notebook-copy > p:not(.moc-letter-eyebrow) {
+  font-family: var(--font-hand), "Segoe Script", cursive;
+  font-size: clamp(1.24rem, 1.9vw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.52;
+}
+
+/* ---------- Intro cafe refinement ---------- */
+
+.intro-cafe::after {
+  /* Warm vignette so the copy separates from the photograph. */
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(ellipse at 30% 55%, transparent 34%, rgba(14, 24, 16, 0.42) 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.scene-date {
+  display: inline-block;
+  padding: 0.36rem 0.7rem;
+  border: 1px solid rgba(255, 240, 227, 0.34);
+  border-radius: 999px;
+  background: rgba(28, 42, 32, 0.34);
+  letter-spacing: 0.22em;
+  backdrop-filter: blur(6px);
+}
+
+.open-map-button::after {
+  /* A small arrow that drifts on hover. */
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+  content: "";
+  transition: transform var(--dur-hover) var(--scene-ease);
+}
+
+.open-map-button:hover:not(:disabled)::after {
+  transform: translateX(5px);
+}
+
+/* ---------- Map world ---------- */
+
+.map-world {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Regions are centred on their node and sized relative to the canvas. */
+.map-region {
+  position: absolute;
+  width: min(17vw, 250px);
+  aspect-ratio: 1.15;
+  filter: none;
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  transition: opacity 1.4s var(--scene-ease), filter 1.4s var(--scene-ease);
+}
+
+.map-region::after {
+  content: none;
+}
+
+.region-terrain {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--region-terrain, radial-gradient(ellipse at 50% 52%, rgba(133, 160, 124, 0.5), transparent 70%));
+  filter: blur(1px);
+}
+
+.region-motif {
+  position: absolute;
+  inset: 24% 26%;
+  background: var(--region-motif, none);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.85;
+}
+
+/* Light travels across the map: green, warm, cold, dark, dawn (spec §8). */
+.region-moc-chau {
+  --region-terrain: radial-gradient(ellipse at 50% 54%, rgba(132, 152, 121, 0.62), rgba(220, 229, 232, 0.3) 52%, transparent 74%);
+  --region-motif: radial-gradient(circle at 30% 74%, #7d9070 0 15%, transparent 17%),
+    radial-gradient(circle at 62% 62%, #96a887 0 19%, transparent 21%),
+    radial-gradient(circle at 46% 34%, rgba(237, 241, 240, 0.8) 0 13%, transparent 15%);
+}
+
+.region-summer {
+  --region-terrain: radial-gradient(ellipse at 50% 52%, rgba(244, 213, 141, 0.55), rgba(175, 196, 154, 0.34) 50%, transparent 74%);
+  --region-motif: radial-gradient(circle at 50% 34%, rgba(255, 240, 190, 0.95) 0 15%, transparent 17%),
+    radial-gradient(circle at 34% 72%, #9db584 0 17%, transparent 19%),
+    radial-gradient(circle at 68% 70%, #adc49a 0 15%, transparent 17%);
+}
+
+.region-first-birthday {
+  --region-terrain: radial-gradient(ellipse at 50% 52%, rgba(242, 201, 143, 0.58), rgba(219, 155, 176, 0.3) 50%, transparent 74%);
+  /* A lit window shape, drawn with soft edges so it never reads as a grey box. */
+  --region-motif: radial-gradient(ellipse at 50% 62%, rgba(128, 97, 79, 0.62) 0 17%, transparent 19%),
+    radial-gradient(circle at 50% 34%, rgba(255, 236, 200, 0.92) 0 15%, transparent 17%);
+}
+
+.region-winter {
+  --region-terrain: radial-gradient(ellipse at 50% 50%, rgba(157, 170, 179, 0.55), rgba(113, 128, 139, 0.24) 52%, transparent 74%);
+  --region-motif: radial-gradient(ellipse at 50% 50%, rgba(226, 236, 241, 0.66) 0 9%, transparent 11%),
+    radial-gradient(circle at 26% 64%, rgba(226, 236, 241, 0.5) 0 10%, transparent 12%),
+    radial-gradient(circle at 74% 38%, rgba(226, 236, 241, 0.42) 0 9%, transparent 11%);
+}
+
+.region-recovery {
+  --region-terrain: radial-gradient(ellipse at 50% 52%, rgba(185, 140, 157, 0.44), rgba(174, 190, 204, 0.3) 52%, transparent 74%);
+  /* Two lit phones with a soft link between them. */
+  --region-motif: radial-gradient(circle at 32% 50%, rgba(233, 169, 191, 0.88) 0 11%, transparent 13%),
+    radial-gradient(circle at 68% 50%, rgba(233, 169, 191, 0.88) 0 11%, transparent 13%),
+    radial-gradient(ellipse at 50% 50%, rgba(255, 240, 246, 0.62) 0 8%, transparent 10%);
+}
+
+.region-tet {
+  --region-terrain: radial-gradient(ellipse at 50% 52%, rgba(201, 107, 114, 0.5), rgba(233, 169, 191, 0.28) 52%, transparent 74%);
+  --region-motif: radial-gradient(circle at 40% 40%, rgba(221, 182, 109, 0.9) 0 13%, transparent 15%),
+    radial-gradient(circle at 64% 58%, rgba(231, 161, 180, 0.9) 0 15%, transparent 17%);
+}
+
+.region-silent-fire {
+  --region-terrain: radial-gradient(ellipse at 50% 56%, rgba(53, 48, 68, 0.62), rgba(41, 46, 60, 0.32) 50%, transparent 74%);
+  --region-motif: radial-gradient(circle at 50% 58%, rgba(241, 180, 109, 0.95) 0 10%, rgba(214, 129, 77, 0.5) 20%, transparent 30%);
+}
+
+.region-birthday-field {
+  --region-terrain: radial-gradient(ellipse at 50% 50%, rgba(233, 169, 191, 0.6), rgba(255, 241, 246, 0.34) 50%, transparent 74%);
+  --region-motif: radial-gradient(circle at 32% 62%, rgba(234, 175, 196, 0.95) 0 12%, transparent 14%),
+    radial-gradient(circle at 56% 52%, rgba(255, 244, 248, 0.95) 0 13%, transparent 15%),
+    radial-gradient(circle at 72% 66%, rgba(234, 175, 196, 0.95) 0 11%, transparent 13%);
+}
+
+/* Fog over land that has not been opened. */
+.region-fog {
+  position: absolute;
+  inset: -12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(249, 245, 247, 0.62) 0 40%, rgba(249, 245, 247, 0.3) 64%, transparent 80%);
+  opacity: 0;
+  transition: opacity 1.6s var(--scene-ease);
+}
+
+.map-region.is-locked {
+  filter: grayscale(0.55);
+}
+
+.map-region.is-locked .region-fog {
+  opacity: 0.7;
+}
+
+.map-region.is-locked .region-motif {
+  opacity: 0.42;
+}
+
+/* A soft ring around the stage that is ready to visit. */
+.map-region.is-current .region-bloom {
+  position: absolute;
+  inset: 2%;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 241, 246, 0.34), transparent 62%);
+  animation: region-breathe 4.2s ease-in-out infinite;
+}
+
+/* Finished land keeps a small permanent bloom. */
+.map-region.is-completed .region-bloom {
+  position: absolute;
+  inset: 30% 32%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 250, 252, 0.7) 0 22%, rgba(233, 169, 191, 0.4) 44%, transparent 70%);
+}
+
+@keyframes region-breathe {
+  0%, 100% { opacity: 0.6; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+/* ---------- The road ---------- */
+
+/* The map never moves. Panning the canvas exposed the empty page behind it,
+   so opening a stage is handled by the photo reveal instead. */
+.map-viewport {
+  height: 100%;
+  transform: none;
+}
+
+.map-path {
+  z-index: 3;
+}
+
+.map-path-base {
+  fill: none;
+  stroke: rgba(255, 252, 253, 0.9);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 1px 2px rgba(154, 91, 120, 0.2));
+}
+
+.map-path-leg {
+  fill: none;
+  stroke: var(--path-locked);
+  stroke-width: 4;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  opacity: 0.5;
+  transition: stroke 1.2s var(--scene-ease), opacity 1.2s var(--scene-ease);
+}
+
+.map-path-leg.is-completed {
+  stroke: var(--path-completed);
+  opacity: 0.95;
+}
+
+/* The leg being walked draws itself in step with the couple. */
+.map-path-leg.is-drawing {
+  stroke: var(--path-active);
+  stroke-dashoffset: 1;
+  opacity: 1;
+  animation: draw-leg 4.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes draw-leg {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* ---------- Characters ---------- */
+
+.map-walker {
+  position: absolute;
+  z-index: 4;
+  width: 46px;
+  height: 46px;
+  pointer-events: none;
+  transform: translate(-50%, -78%);
+}
+
+.map-walker-figure {
+  width: 100%;
+  height: 100%;
+}
+
+.map-walker svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.couple-figures {
+  fill: #6d4a5d;
+  stroke: rgba(255, 252, 250, 0.9);
+  stroke-width: 1.6;
+  filter: drop-shadow(0 3px 3px rgba(129, 72, 102, 0.26));
+}
+
+.couple-shadow {
+  fill: rgba(120, 74, 96, 0.22);
+  stroke: none;
+}
+
+/* ---------- Nodes ---------- */
+
+.map-node {
+  z-index: 5;
+  display: grid;
+  width: auto;
+  height: auto;
+  place-items: center;
+}
+
+/* Each stage shows its own photograph, framed like a small print on the map. */
+.node-photo {
+  position: relative;
+  display: block;
+  width: clamp(84px, 9vw, 132px);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 5px solid var(--warm-white);
+  border-radius: 50%;
+  background: #e6d2da;
+  box-shadow: 0 12px 30px rgba(122, 68, 96, 0.24), 0 0 0 1px rgba(201, 126, 153, 0.18);
+  transition: transform 0.55s var(--scene-ease), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.node-photo .memory-image {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+}
+
+.node-photo .memory-image img {
+  object-fit: cover;
+}
+
+/* Hint text has no room inside a small medallion. */
+.node-photo .memory-image-hint {
+  display: none;
+}
+
+.node-photo-veil {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 250, 252, 0.16), transparent 46%, rgba(122, 68, 96, 0.24));
+}
+
+.node-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 2px solid var(--warm-white);
+  border-radius: 50%;
+  background: rgba(255, 251, 253, 0.96);
+  box-shadow: 0 4px 12px rgba(122, 68, 96, 0.24);
+  color: var(--pink-deep);
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+/* Locked land keeps its photograph hidden behind mist. */
+.map-node.is-locked .node-photo {
+  border-color: rgba(255, 253, 254, 0.7);
+  box-shadow: 0 6px 16px rgba(122, 68, 96, 0.12);
+  filter: grayscale(0.85) brightness(1.12) blur(2px);
+}
+
+.map-node.is-locked .node-photo-veil {
+  background: rgba(250, 246, 248, 0.72);
+}
+
+.map-node.is-locked .node-badge {
+  background: rgba(246, 242, 244, 0.96);
+  color: var(--text-muted);
+  filter: none;
+}
+
+.map-node.is-available .node-photo {
+  border-color: #fff;
+  box-shadow: 0 0 0 7px rgba(233, 169, 191, 0.32), 0 16px 36px rgba(137, 70, 105, 0.3);
+  animation: node-breathe 3s ease-in-out infinite;
+}
+
+.map-node.is-available .node-badge {
+  background: var(--pink-deep);
+  color: #fffafb;
+}
+
+.map-node.is-completed .node-photo {
+  border-color: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 0 0 4px rgba(233, 169, 191, 0.24), 0 10px 24px rgba(137, 70, 105, 0.18);
+}
+
+.map-node.is-active .node-photo {
+  border-color: #fff;
+  box-shadow: 0 0 0 10px rgba(255, 232, 241, 0.6), 0 18px 40px rgba(137, 70, 105, 0.32);
+}
+
+.map-node.is-available:hover .node-photo,
+.map-node.is-completed:hover .node-photo {
+  transform: translateY(-5px) scale(1.06);
+  box-shadow: 0 0 0 9px rgba(233, 169, 191, 0.34), 0 22px 44px rgba(137, 70, 105, 0.34);
+}
+
+@keyframes node-breathe {
+  50% {
+    box-shadow: 0 0 0 13px rgba(233, 169, 191, 0.18), 0 16px 36px rgba(137, 70, 105, 0.3);
+  }
+}
+
+.node-copy {
+  min-width: 172px;
+  bottom: calc(100% + 14px);
+}
+
+.node-copy strong {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: normal;
+}
+
+.node-copy small {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* Only the reachable node keeps its label open; the rest reveal on hover/focus. */
+.map-node:hover .node-copy,
+.map-node:focus-visible .node-copy {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+/* ---------- Opening a stage ---------- */
+
+.stage-reveal {
+  position: fixed;
+  z-index: 45;
+  inset: 0;
+  display: grid;
+  overflow: hidden;
+  align-content: end;
+  background: #2b1e25;
+  will-change: clip-path;
+}
+
+.stage-reveal-media {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.stage-reveal-media .memory-image {
+  position: absolute;
+  inset: 0;
+}
+
+.stage-reveal-media .memory-image img {
+  object-fit: cover;
+}
+
+.stage-reveal-media .memory-image-hint {
+  display: none;
+}
+
+.stage-reveal::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(38, 24, 31, 0.82), rgba(38, 24, 31, 0.18) 46%, transparent);
+  content: "";
+}
+
+.stage-reveal-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.35rem;
+  padding: clamp(1.5rem, 6vw, 4.5rem);
+}
+
+.stage-reveal-copy p {
+  margin: 0;
+  color: rgba(255, 240, 246, 0.82);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.stage-reveal-copy strong {
+  color: #fffafc;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: var(--title-scene);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+
+/* ---------- Progress + music ---------- */
+
+.journey-progress {
+  width: 150px;
+}
+
+.journey-progress-bar {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin: 0.35rem 0 0.3rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(160, 110, 133, 0.22);
+}
+
+.journey-progress-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--pink-deep);
+  transition: width 900ms var(--scene-ease);
+}
+
+.music-control {
+  position: fixed;
+  z-index: 40;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem 0.5rem 0.8rem;
+  background: rgba(46, 34, 42, 0.56);
+  box-shadow: 0 12px 30px rgba(30, 18, 26, 0.3);
+  color: #fff6f9;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: transform var(--dur-hover) var(--scene-ease), background var(--dur-hover) ease;
+  backdrop-filter: blur(12px);
+}
+
+.music-control:hover {
+  background: rgba(62, 44, 54, 0.72);
+  transform: translateY(-2px);
+}
+
+.music-control.is-on {
+  border-color: rgba(233, 169, 191, 0.7);
+}
+
+/* ---------- Legacy cleanup ---------- */
+
+/* Replaced by MapWorld; the old single-photo frame is no longer rendered. */
+.selected-memory-frame,
+.memory-window {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .map-region {
+    width: 34vw;
+  }
+
+  .node-copy {
+    display: none;
+  }
+
+  .node-photo {
+    width: 74px;
+    border-width: 4px;
+  }
+
+  .node-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  /* Progress moves to the bottom of the screen on phones (spec §24). */
+  .journey-progress {
+    position: fixed;
+    right: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    left: 1rem;
+    z-index: 30;
+    display: grid;
+    width: auto;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.9rem;
+  }
+
+  .journey-progress p {
+    grid-row: 1;
+  }
+
+  .journey-progress-bar {
+    margin: 0;
+  }
+
+  .music-control {
+    bottom: calc(5.2rem + env(safe-area-inset-bottom));
+    padding: 0.5rem 0.7rem;
+  }
+
+  .music-control span {
+    display: none;
+  }
+
+  .map-guidance {
+    bottom: calc(4.6rem + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-path-leg.is-drawing,
+  .map-region.is-current .region-bloom,
+  .map-node.is-available .node-photo {
+    animation: none;
+  }
+
+  .map-path-leg.is-drawing {
+    stroke-dashoffset: 0;
+  }
+
+  .map-node.is-available:hover .node-photo,
+  .map-node.is-completed:hover .node-photo,
+  .music-control:hover {
+    transform: none;
+  }
+}
+
+/* ---------- Stage 2 photo polish ---------- */
+
+/* The sheen used to sit outside the frame (left: -62%) and was always painted,
+   which produced a hard white diagonal streak beside every photograph.
+   It now lives inside the frame and only sweeps on hover/focus. */
+.summer-moment::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  left: 0;
+  width: auto;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 246, 0.5) 50%, transparent 60%);
+  background-repeat: no-repeat;
+  background-size: 260% 100%;
+  background-position: 150% 0;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: none;
+  transition: opacity 0.35s ease;
+}
+
+.summer-moment:hover::before,
+.summer-moment:focus-visible::before {
+  opacity: 1;
+  animation: summer-photo-sheen 1.05s var(--scene-ease);
+}
+
+@keyframes summer-photo-sheen {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+/* Softer, warmer frames instead of the hard white edge. */
+.summer-moment {
+  border-color: rgba(255, 253, 247, 0.96);
+  border-radius: 4px;
+  box-shadow: 0 14px 30px rgba(92, 108, 77, 0.16), 0 2px 6px rgba(92, 108, 77, 0.1);
+}
+
+.summer-moment::after {
+  /* A gentle inner edge rather than a bright overlay. */
+  background: linear-gradient(150deg, rgba(255, 252, 236, 0.12), transparent 42%, rgba(74, 88, 61, 0.1));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summer-moment:hover::before,
+  .summer-moment:focus-visible::before {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Stage 2 modal now uses the shared centred dialog. */
+.tone-summer {
+  --modal-bg: rgba(255, 253, 246, 0.98);
+  --modal-border: rgba(132, 155, 109, 0.34);
+  --modal-close-bg: rgba(225, 237, 209, 0.9);
+  --modal-text: #4f5c47;
+  --eyebrow-color: #92793f;
+  --placeholder-bg: #d5e2ce;
+}
+
+.tone-summer .summer-panel-media {
+  position: relative;
+  display: grid;
+  min-height: 300px;
+  height: min(62dvh, 680px);
+  overflow: hidden;
+  place-items: center;
+  border: 5px solid rgba(255, 255, 248, 0.96);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #edf3e9, #d7e4d0);
+  box-shadow: 0 12px 26px rgba(93, 104, 77, 0.16);
+}
+
+/* Every memory keeps its own orientation: landscape, portrait, and square photos are never cropped. */
+.summer-scene .summer-moment > img {
+  object-fit: contain !important;
+  object-position: center;
+  background: linear-gradient(135deg, #eef4eb, #d6e3ce);
+}
+
+/* A lifted frame is enough feedback. Scaling the image would crop the edges again. */
+.summer-scene .summer-moment:hover > img,
+.summer-scene .summer-moment:focus-visible > img,
+.summer-scene .summer-moment.is-active > img {
+  transform: none !important;
+}
+
+.tone-summer .memory-modal-panel {
+  width: min(920px, calc(100vw - 3rem));
+}
+
+.tone-summer .summer-panel-media > img {
+  object-fit: contain !important;
+  object-position: center;
+  background: linear-gradient(135deg, #eef4eb, #d6e3ce);
+}
+
+@media (max-width: 767px) {
+  .tone-summer .summer-panel-media {
+    min-height: 240px;
+    height: min(54dvh, 520px);
+  }
+}
+
+.tone-summer .summer-complete {
+  --cta-bg: #e2b18f;
+  --cta-border: #d4a886;
+  --cta-text: #4f4137;
+  --cta-shadow: rgba(166, 105, 74, 0.22);
+  justify-self: start;
+}
+
+@media (max-width: 767px) {
+  .tone-summer .summer-complete {
+    width: 100%;
+  }
+}

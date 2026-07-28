@@ -1,0 +1,644 @@
+/* Phone composition: a calm, touch-first version of the journey rather than a scaled desktop canvas. */
+@media (max-width: 767px) {
+  :root {
+    --mobile-gutter: 1rem;
+    --mobile-safe-top: max(0.75rem, env(safe-area-inset-top));
+    --mobile-safe-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    min-width: 320px;
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+  }
+
+  .journey-root,
+  .scene-layer {
+    width: 100%;
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  button,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .scene-back,
+  .return-button,
+  .moc-story-back,
+  .memory-modal-close,
+  .tet-code-reader-controls button,
+  .music-control {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  .scene-back,
+  .moc-story-back,
+  .return-button {
+    top: var(--mobile-safe-top);
+    left: calc(var(--mobile-gutter) + env(safe-area-inset-left));
+  }
+
+  .scene-title {
+    font-size: clamp(2.15rem, 10.5vw, 3.1rem);
+    letter-spacing: -0.055em;
+    line-height: 0.99;
+  }
+
+  .scene-lede {
+    font-size: 0.98rem;
+    line-height: 1.62;
+  }
+
+  .scene-eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+
+  .scene-cta,
+  .open-map-button,
+  .moc-next-stage {
+    min-height: 52px;
+  }
+
+  /* Màn chào: the opening copy stays low and readable over its scene. */
+  .intro-cafe {
+    min-height: 100dvh;
+    padding: calc(var(--mobile-safe-top) + 1rem) var(--mobile-gutter) calc(var(--mobile-safe-bottom) + 1rem);
+    align-items: end;
+  }
+
+  .intro-cafe .cafe-image {
+    object-position: 59% center;
+    transform: scale(1.025);
+  }
+
+  .cafe-content {
+    width: 100%;
+    max-width: 31rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .cafe-content h1 {
+    max-width: 8ch;
+    font-size: clamp(3.15rem, 15vw, 4.7rem);
+    line-height: 0.9;
+  }
+
+  .scene-intro,
+  .scene-letter {
+    max-width: 34ch;
+  }
+
+  .open-map-button {
+    width: min(100%, 26rem);
+    justify-content: center;
+  }
+
+  /* Bản đồ: minimise labels but preserve the tactile route and clear controls. */
+  .adventure-map,
+  .map-scene {
+    min-height: 100dvh;
+  }
+
+  .map-header {
+    width: min(100% - 2rem, 31rem);
+    margin: 0 auto;
+    padding-top: calc(var(--mobile-safe-top) + 0.35rem);
+    text-align: center;
+  }
+
+  .map-header h1 {
+    max-width: 10ch;
+    margin-right: auto;
+    margin-left: auto;
+    font-size: clamp(2.6rem, 13vw, 4rem);
+    line-height: 0.93;
+  }
+
+  .map-subtitle {
+    max-width: 31ch;
+    margin-right: auto;
+    margin-left: auto;
+    font-size: 0.85rem;
+  }
+
+  .return-button {
+    display: grid;
+    width: 48px;
+    place-items: center;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0;
+  }
+
+  .return-button svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .map-node {
+    width: 54px;
+    height: 54px;
+  }
+
+  .map-node .node-photo,
+  .node-photo {
+    width: 54px;
+    height: 54px;
+    border-width: 3px;
+  }
+
+  .node-badge {
+    width: 26px;
+    height: 26px;
+    font-size: 0.68rem;
+  }
+
+  .journey-progress {
+    right: var(--mobile-gutter);
+    bottom: calc(var(--mobile-safe-bottom) + 0.2rem);
+    left: var(--mobile-gutter);
+    width: auto;
+    min-height: 48px;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .music-control {
+    right: var(--mobile-gutter);
+    bottom: calc(var(--mobile-safe-bottom) + 4.5rem);
+    display: inline-flex;
+    gap: 0.45rem;
+    padding: 0 0.78rem;
+  }
+
+  .music-control span {
+    display: inline;
+    font-size: 0.72rem;
+  }
+
+  .map-guidance {
+    right: var(--mobile-gutter);
+    bottom: calc(var(--mobile-safe-bottom) + 8.5rem);
+    left: var(--mobile-gutter);
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  /* Chặng 1: horizontal hanging gallery intentionally scrolls; no squeezed photographs. */
+  .moc-scroll-story {
+    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+  }
+
+  .moc-scroll-panel {
+    min-height: 100dvh;
+    padding: calc(var(--mobile-safe-top) + 3.5rem) 0 calc(var(--mobile-safe-bottom) + 0.5rem);
+  }
+
+  .moc-scroll-heading {
+    width: min(100% - 2rem, 32rem);
+    padding-top: 0;
+  }
+
+  .moc-scroll-heading h1 {
+    font-size: clamp(2.3rem, 11.5vw, 3.25rem);
+    line-height: 0.98;
+  }
+
+  .moc-photo-rail,
+  .moc-scroll-photos .moc-photo-rail {
+    width: 100%;
+    min-height: 440px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .moc-photo-rail::-webkit-scrollbar { display: none; }
+
+  .moc-photo-strip {
+    display: grid;
+    width: max-content;
+    min-width: max-content;
+    grid-template-columns: repeat(5, minmax(10.75rem, 10.75rem));
+    gap: 1.05rem;
+    padding: 5.3rem max(1rem, env(safe-area-inset-left)) 3.6rem;
+  }
+
+  .moc-scroll-photos .memory-hanging-photo {
+    width: 10.75rem;
+    scroll-snap-align: center;
+  }
+
+  .moc-scroll-photos .memory-photo-image {
+    aspect-ratio: 0.78;
+  }
+
+  .moc-scroll-photos .memory-photo-image img {
+    object-fit: cover;
+  }
+
+  .moc-photo-rail > p {
+    position: sticky;
+    bottom: 0.75rem;
+    left: var(--mobile-gutter);
+    width: calc(100vw - 2rem);
+    margin: 0;
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 249, 251, 0.78);
+    backdrop-filter: blur(10px);
+    font-size: 0.73rem;
+  }
+
+  .moc-video-stage {
+    width: min(100% - 2rem, 38rem);
+    min-height: 0;
+    align-self: center;
+  }
+
+  .moc-video-player,
+  .moc-video-stage .memory-video {
+    width: 100%;
+    max-height: none;
+    aspect-ratio: 16 / 10;
+    border-width: 5px;
+  }
+
+  .moc-notebook-copy {
+    width: min(100% - 2rem, 31rem);
+  }
+
+  .moc-notebook-copy h2,
+  .moc-video-copy h2 {
+    font-size: clamp(2rem, 10vw, 2.85rem);
+  }
+
+  /* Chặng 2: two-column pins with no overlapping caption layers. */
+  .summer-scene {
+    min-height: 100dvh;
+    padding: calc(var(--mobile-safe-top) + 3.5rem) var(--mobile-gutter) calc(var(--mobile-safe-bottom) + 1rem);
+    overflow-y: auto;
+  }
+
+  .summer-heading {
+    width: 100%;
+    text-align: center;
+  }
+
+  .summer-heading h1 {
+    font-size: clamp(2.35rem, 11.5vw, 3.25rem);
+  }
+
+  .summer-memory-map {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem 0.9rem;
+    width: 100%;
+    padding: 1.5rem 0 7.25rem;
+  }
+
+  .summer-moment {
+    min-height: 0;
+    aspect-ratio: 0.86;
+    border-width: 4px;
+  }
+
+  .summer-moment > span {
+    bottom: -1.65rem;
+    width: 100%;
+    opacity: 1;
+    font-size: 0.72rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .summer-cinema,
+  .summer-sunset {
+    grid-column: span 2;
+    aspect-ratio: 1.55;
+  }
+
+  .summer-memory-panel {
+    right: 0.55rem;
+    bottom: calc(var(--mobile-safe-bottom) + 0.55rem);
+    left: 0.55rem;
+    width: auto;
+    max-height: min(72dvh, 43rem);
+    border-radius: 22px;
+  }
+
+  /* Chặng 3 and 4: retain the room/street scene, while tightening copy and hotspots. */
+  .birthday-room,
+  .winter-scene {
+    min-height: 100dvh;
+    padding: calc(var(--mobile-safe-top) + 4rem) var(--mobile-gutter) calc(var(--mobile-safe-bottom) + 1rem);
+  }
+
+  .room-header,
+  .winter-header {
+    width: min(100%, 27rem);
+    margin-left: 0;
+  }
+
+  .room-header .scene-title,
+  .winter-header .scene-title {
+    max-width: 10ch;
+  }
+
+  .room-header .scene-lede,
+  .winter-header .scene-lede {
+    max-width: 31ch;
+    font-size: 0.92rem;
+    line-height: 1.58;
+  }
+
+  .room-object {
+    width: 52px;
+    height: 52px;
+  }
+
+  .room-object-copy {
+    opacity: 1;
+    font-size: 0.65rem;
+    transform: translate(-50%, 0);
+  }
+
+  .room-complete,
+  .winter-complete {
+    right: var(--mobile-gutter);
+    bottom: calc(var(--mobile-safe-bottom) + 0.5rem);
+    left: var(--mobile-gutter);
+    width: auto;
+    justify-items: stretch;
+  }
+
+  .room-complete p,
+  .winter-complete p {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .winter-conversations {
+    width: min(100%, 29rem);
+    margin-top: 1.8rem;
+  }
+
+  .winter-phrases {
+    gap: 0.55rem;
+  }
+
+  .winter-phrase {
+    min-height: 50px;
+    padding: 0.8rem 0.95rem;
+    font-size: 0.9rem;
+  }
+
+  /* Chặng 5: turn dense phone logs into a scannable horizontal rail. */
+  .recovery-scene {
+    min-height: 100dvh;
+    padding: calc(var(--mobile-safe-top) + 4rem) var(--mobile-gutter) calc(var(--mobile-safe-bottom) + 1rem);
+    overflow-y: auto;
+  }
+
+  .recovery-header {
+    width: min(100%, 30rem);
+  }
+
+  .recovery-call-console {
+    width: min(100%, 25rem);
+    margin: 1.5rem auto;
+  }
+
+  .recovery-entry-list {
+    display: flex;
+    width: calc(100% + 1rem);
+    margin-right: -0.5rem;
+    margin-left: -0.5rem;
+    gap: 0.65rem;
+    padding: 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
+  }
+
+  .recovery-entry-list li {
+    flex: 0 0 min(82vw, 19rem);
+  }
+
+  .recovery-entry {
+    min-height: 78px;
+    grid-template-columns: 2rem 1fr;
+    padding: 0.8rem;
+    scroll-snap-align: center;
+  }
+
+  .recovery-entry-copy small {
+    display: block;
+  }
+
+  /* Chặng 6: the book remains recognisable on a narrow screen, with usable controls. */
+  .tet-codebook-scene .tet-code-cover-stage header,
+  .tet-codebook-scene .tet-code-reader-heading {
+    top: calc(var(--mobile-safe-top) + 3.7rem) !important;
+    width: min(88vw, 32rem) !important;
+  }
+
+  .tet-codebook-scene .tet-code-cover-stage h1 {
+    font-size: clamp(2.25rem, 11vw, 3.3rem) !important;
+  }
+
+  .tet-codebook-scene .tet-code-cover {
+    width: min(70vw, 290px) !important;
+  }
+
+  .tet-codebook-scene .tet-code-page-turn {
+    top: 18.5vh !important;
+    width: 98vw !important;
+    height: min(48dvh, 440px) !important;
+  }
+
+  .tet-codebook-scene .tet-code-reader-controls {
+    bottom: calc(var(--mobile-safe-bottom) + 0.15rem) !important;
+    gap: 0.45rem !important;
+  }
+
+  .tet-codebook-scene .tet-code-reader-controls button {
+    min-height: 44px !important;
+    padding: 0.48rem 0.65rem !important;
+    font-size: 0.67rem !important;
+  }
+
+  .tet-codebook-scene .tet-code-photo-preview {
+    width: 94vw !important;
+    max-height: 82dvh;
+  }
+
+  /* Chặng 7/8: one centred focal point, then readable memories around it. */
+  .fire-scene,
+  .field-scene {
+    min-height: 100dvh;
+    padding: calc(var(--mobile-safe-top) + 4rem) var(--mobile-gutter) calc(var(--mobile-safe-bottom) + 1rem);
+  }
+
+  .fire-header,
+  .field-invite {
+    width: min(100%, 29rem);
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+  }
+
+  .fire-header .scene-title,
+  .field-title {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .fire-header .scene-lede,
+  .field-invite .scene-lede {
+    margin-right: auto;
+    margin-left: auto;
+    font-size: 0.92rem;
+  }
+
+  .fire-figures {
+    width: min(94vw, 31rem);
+  }
+
+  .fire-person {
+    transform: scale(0.84);
+    transform-origin: bottom;
+  }
+
+  .fire-person-left { left: -4%; }
+  .fire-person-right { right: -4%; }
+
+  .fire-ember {
+    width: 52px;
+    height: 52px;
+  }
+
+  .fire-slips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+    width: min(94vw, 31rem);
+    margin: 0 auto;
+  }
+
+  .fire-slip {
+    min-height: 0;
+    padding: 0.8rem;
+  }
+
+  .fire-slip p {
+    font-size: 0.83rem;
+  }
+
+  .field-gift-layer {
+    min-height: 68dvh;
+  }
+
+  .gift-opening {
+    transform: scale(0.84);
+    transform-origin: center;
+  }
+
+  .gift-opening.is-revealed .gift-ring-photo {
+    width: min(28vw, 112px);
+    height: min(28vw, 112px);
+  }
+
+  .field-video-layer .memory-video {
+    width: min(100%, 30rem);
+    aspect-ratio: 16 / 10;
+    border-width: 5px;
+  }
+
+  .final-message {
+    padding: calc(var(--mobile-safe-top) + 1rem) var(--mobile-gutter) calc(var(--mobile-safe-bottom) + 1rem);
+  }
+
+  .final-message-inner {
+    width: 100%;
+    max-height: 78dvh;
+    padding: 1.5rem 1.25rem;
+    border-radius: 24px;
+  }
+
+  .final-message-lines p {
+    font-size: clamp(1.15rem, 5.4vw, 1.55rem);
+    line-height: 1.42;
+  }
+
+  /* Every gallery and modal keeps full image proportions and a stable bottom-sheet rhythm. */
+  .memory-modal-panel {
+    width: 100%;
+    max-height: calc(100dvh - 0.5rem);
+    border-radius: 24px 24px 0 0;
+  }
+
+  .memory-modal-body {
+    max-height: calc(100dvh - 8rem);
+    padding-bottom: calc(var(--mobile-safe-bottom) + 1rem);
+  }
+
+  .memory-gallery {
+    grid-auto-columns: minmax(76vw, 76vw);
+    gap: 0.85rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .memory-gallery-item {
+    scroll-snap-align: center;
+  }
+
+  .memory-gallery-item .memory-image,
+  .memory-modal-body > .memory-image {
+    aspect-ratio: 4 / 5;
+  }
+
+  .memory-gallery-item .memory-image img,
+  .memory-modal-body > .memory-image img {
+    object-fit: contain;
+  }
+}
+
+@media (max-width: 380px) {
+  .cafe-content h1 { font-size: 3rem; }
+  .moc-photo-strip { grid-template-columns: repeat(5, 10rem); }
+  .moc-scroll-photos .memory-hanging-photo { width: 10rem; }
+  .summer-memory-map { gap: 2rem 0.7rem; }
+  .tet-codebook-scene .tet-code-page-turn { height: min(45dvh, 380px) !important; }
+}
+
+@media (max-width: 767px) and (orientation: landscape) and (max-height: 600px) {
+  .intro-cafe { align-items: center; }
+  .cafe-content { padding-top: 3.5rem; }
+  .cafe-content h1 { font-size: clamp(2.7rem, 8vw, 3.8rem); }
+  .moc-scroll-panel { min-height: 100dvh; }
+  .moc-photo-rail { min-height: 300px; }
+  .moc-photo-strip { padding-top: 3.6rem; }
+  .tet-codebook-scene .tet-code-page-turn { top: 22vh !important; height: 57dvh !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

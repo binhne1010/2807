@@ -1,0 +1,534 @@
+/* Stage 7 - a deliberately sparse, CSS-only dawn scene. */
+.fire-scene {
+  --stage-7-night: #191d27;
+  --stage-7-blue: #292e3c;
+  --stage-7-purple: #383142;
+  --stage-7-fire: #d6814d;
+  --stage-7-ember: #f1b46d;
+  --stage-7-text: #ded7dc;
+  --chrome-border: rgba(222, 215, 220, 0.3);
+  --chrome-bg: rgba(25, 29, 39, 0.72);
+  --chrome-bg-hover: rgba(47, 47, 59, 0.84);
+  --chrome-text: var(--stage-7-text);
+  --cta-bg: #d6814d;
+  --cta-border: rgba(241, 180, 109, 0.72);
+  --cta-text: #241a16;
+  --cta-shadow: rgba(0, 0, 0, 0.5);
+  --eyebrow-color: #d4a496;
+  --title-color: #f0ebed;
+  --lede-color: rgba(235, 229, 232, 0.8);
+  --progress-color: rgba(235, 229, 232, 0.77);
+  --progress-track: rgba(235, 229, 232, 0.2);
+  --progress-fill: var(--stage-7-ember);
+  --placeholder-bg: #33303c;
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding: clamp(4.2rem, 8vw, 5.5rem) clamp(1.15rem, 5vw, 5rem) clamp(1.5rem, 4vw, 3rem);
+  background: var(--stage-7-night);
+  color: var(--stage-7-text);
+}
+
+.fire-sky,
+.fire-clouds,
+.fire-horizon,
+.fire-ground,
+.fire-figures,
+.fire-pit,
+.fire-flower-path {
+  position: absolute;
+  pointer-events: none;
+}
+
+.fire-sky {
+  z-index: -6;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 62% 20% at 50% 60%, rgba(213, 134, 106, 0.29), transparent 72%),
+    linear-gradient(180deg, #171b27 0%, #252c3b 47%, #4d4651 68%, #242735 100%);
+}
+
+.fire-sky::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(6, 9, 15, 0.28), transparent 31%, rgba(15, 17, 26, 0.14) 62%, rgba(8, 10, 16, 0.6));
+  content: "";
+}
+
+.fire-clouds {
+  z-index: -5;
+  inset: 7% 0 auto;
+  height: 32%;
+  overflow: hidden;
+  opacity: 0.7;
+}
+
+.fire-clouds span {
+  position: absolute;
+  width: 72vw;
+  height: 18%;
+  background: linear-gradient(90deg, transparent, rgba(82, 84, 101, 0.38) 22%, rgba(82, 84, 101, 0.54) 50%, transparent 84%);
+  filter: blur(13px);
+  transform: rotate(-2deg);
+  animation: fire-cloud-drift 32s ease-in-out infinite alternate;
+}
+
+.fire-clouds span:first-child { top: 23%; left: -19vw; }
+.fire-clouds span:last-child { top: 58%; right: -29vw; opacity: 0.68; animation-delay: -13s; animation-direction: alternate-reverse; }
+
+@keyframes fire-cloud-drift {
+  to { transform: translate3d(7vw, 0, 0) rotate(-2deg); }
+}
+
+.fire-horizon {
+  z-index: -4;
+  right: 0;
+  bottom: 26vh;
+  left: 0;
+  height: 23vh;
+  background: linear-gradient(180deg, rgba(30, 35, 47, 0.86), #1a202c);
+  clip-path: polygon(0 64%, 13% 56%, 26% 62%, 43% 48%, 58% 60%, 73% 53%, 88% 65%, 100% 51%, 100% 100%, 0 100%);
+}
+
+.fire-ground {
+  z-index: -3;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 32vh;
+  background: linear-gradient(180deg, #1b202b 0%, #11151e 72%);
+  clip-path: polygon(0 15%, 22% 7%, 47% 14%, 65% 5%, 83% 12%, 100% 8%, 100% 100%, 0 100%);
+}
+
+.fire-header {
+  position: relative;
+  z-index: 16;
+  display: grid;
+  width: min(33rem, 100%);
+  gap: 0.38rem;
+}
+
+.fire-header .scene-title { font-size: clamp(2rem, 3.4vw, 3.1rem); max-width: 11ch; }
+.fire-header .scene-lede { max-width: 32rem; font-size: 0.98rem; }
+.fire-header .scene-progress { margin-top: 0.5rem; }
+
+.fire-figures {
+  z-index: 3;
+  bottom: 4.6vh;
+  left: 50%;
+  width: min(690px, 92vw);
+  height: 146px;
+  transform: translateX(-50%);
+}
+
+.fire-person {
+  position: absolute;
+  bottom: 0;
+  width: 94px;
+  height: 132px;
+  filter: drop-shadow(0 9px 8px rgba(0, 0, 0, 0.28));
+}
+
+.fire-person-left { left: 3%; transform: rotate(1deg); }
+.fire-person-right { right: 3%; transform: scaleX(-1) rotate(1deg); }
+
+.fire-person i { position: absolute; display: block; }
+.fire-person-head {
+  z-index: 3;
+  top: 3px;
+  left: 48px;
+  width: 27px;
+  height: 31px;
+  border-radius: 46% 46% 42% 42%;
+  background: linear-gradient(105deg, #25212a 0 58%, #13131a 59%);
+  box-shadow: inset -3px -2px 0 rgba(0, 0, 0, 0.22), 4px 2px 10px rgba(241, 180, 109, 0.1);
+}
+
+.fire-person-left .fire-person-head::after {
+  position: absolute;
+  top: 3px;
+  right: -8px;
+  width: 13px;
+  height: 26px;
+  border-radius: 0 0 12px 9px;
+  background: #17151d;
+  content: "";
+}
+
+.fire-person-torso {
+  z-index: 2;
+  top: 28px;
+  left: 23px;
+  width: 56px;
+  height: 64px;
+  border-radius: 48% 52% 27% 31% / 38% 40% 22% 24%;
+  background: linear-gradient(108deg, #17151d 4%, #302936 72%, rgba(241, 180, 109, 0.24) 100%);
+  transform: rotate(8deg);
+}
+
+.fire-person-arm {
+  z-index: 4;
+  top: 59px;
+  left: 12px;
+  width: 50px;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #15131b 0%, #2b2630 72%, rgba(241, 180, 109, 0.25));
+  transform: rotate(18deg);
+  transform-origin: right center;
+}
+
+.fire-person-legs {
+  bottom: 5px;
+  left: 0;
+  width: 88px;
+  height: 45px;
+  border-radius: 56% 44% 24% 28% / 52% 48% 18% 20%;
+  background: linear-gradient(112deg, #111118 4%, #29232d 70%, rgba(241, 180, 109, 0.16));
+  transform: rotate(-4deg);
+}
+
+.fire-person-legs::after {
+  position: absolute;
+  right: -8px;
+  bottom: -2px;
+  width: 39px;
+  height: 12px;
+  border-radius: 999px 5px 5px 999px;
+  background: #121219;
+  content: "";
+  transform: rotate(2deg);
+}
+
+.fire-pit {
+  z-index: 4;
+  bottom: 5.9vh;
+  left: 50%;
+  width: min(450px, 80vw);
+  height: 194px;
+  transform: translateX(-50%);
+}
+
+.fire-glow {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  width: min(620px, 108vw);
+  height: min(620px, 108vw);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(241, 180, 109, calc(var(--fire-strength, 0.6) * 0.22)) 0 8%, rgba(214, 129, 77, calc(var(--fire-strength, 0.6) * 0.12)) 24%, transparent 56%);
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+  animation: fire-breathe 5.5s ease-in-out infinite;
+}
+
+@keyframes fire-breathe {
+  0%, 100% { opacity: 0.74; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.045); }
+}
+
+.fire-stones {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  width: 196px;
+  height: 52px;
+  transform: translateX(-50%);
+}
+
+.fire-stones i {
+  position: absolute;
+  width: 39px;
+  height: 18px;
+  border: 1px solid rgba(166, 139, 117, 0.18);
+  border-radius: 48% 52% 43% 44%;
+  background: linear-gradient(145deg, #4b4141, #24232c);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.38);
+}
+
+.fire-stones i:nth-child(1) { bottom: 1px; left: 8px; transform: rotate(-11deg); }
+.fire-stones i:nth-child(2) { bottom: 10px; left: 39px; transform: rotate(8deg); }
+.fire-stones i:nth-child(3) { bottom: 14px; left: 77px; }
+.fire-stones i:nth-child(4) { bottom: 10px; right: 39px; transform: rotate(-8deg); }
+.fire-stones i:nth-child(5) { bottom: 1px; right: 8px; transform: rotate(11deg); }
+.fire-stones i:nth-child(6) { bottom: -2px; left: 78px; opacity: 0.88; }
+
+.fire-logs {
+  position: absolute;
+  bottom: 27px;
+  left: 50%;
+  width: 60%;
+  height: 13px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #281d19, #5a3c2b 49%, #281d19);
+  box-shadow: 0 4px 11px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%);
+}
+
+.fire-logs::after {
+  position: absolute;
+  top: -7px;
+  left: 9%;
+  width: 82%;
+  height: 12px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #211814, #483020 50%, #211814);
+  content: "";
+  transform: rotate(-7deg);
+}
+
+.fire-flame {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  border-radius: 50% 50% 42% 42% / 68% 68% 32% 32%;
+  filter: blur(0.7px);
+  mix-blend-mode: screen;
+  transform-origin: 50% 100%;
+}
+
+.flame-one { --tx: -50%; width: 53px; height: 90px; background: radial-gradient(ellipse at 50% 78%, #fff0c0 0 14%, var(--stage-7-ember) 40%, rgba(214, 129, 77, 0.5) 74%, transparent); animation: flame-dance 3.1s ease-in-out infinite; }
+.flame-two { --tx: -123%; width: 34px; height: 63px; background: radial-gradient(ellipse at 50% 76%, #ffe9b0 0 16%, var(--stage-7-fire) 52%, transparent 82%); opacity: 0.85; animation: flame-dance 2.6s ease-in-out -0.9s infinite; }
+.flame-three { --tx: 39%; width: 29px; height: 55px; background: radial-gradient(ellipse at 50% 76%, #ffe9b0 0 16%, var(--stage-7-fire) 52%, transparent 82%); opacity: 0.78; animation: flame-dance 2.9s ease-in-out -1.7s infinite; }
+
+@keyframes flame-dance {
+  0%, 100% { transform: translateX(var(--tx)) scaleY(1) skewX(0deg); }
+  32% { transform: translateX(var(--tx)) scaleY(1.1) skewX(-4deg); }
+  67% { transform: translateX(var(--tx)) scaleY(0.95) skewX(3deg); }
+}
+
+.fire-sparks { position: absolute; inset: -54% 0 0; }
+.fire-sparks span {
+  position: absolute;
+  bottom: 24%;
+  left: calc(31% + var(--i) * 5.2%);
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--stage-7-ember);
+  box-shadow: 0 0 8px rgba(241, 180, 109, 0.82);
+  opacity: 0;
+  animation: spark-rise 6s ease-out infinite;
+  animation-delay: calc(var(--i) * -0.74s);
+}
+
+@keyframes spark-rise {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) scale(1); }
+  12% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(22px, -230px, 0) scale(0.3); }
+}
+
+.fire-ember {
+  position: absolute;
+  z-index: 6;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+.fire-ember > span {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 34%, #fff2cf 0 24%, var(--stage-7-ember) 58%, var(--stage-7-fire));
+  box-shadow: 0 0 12px rgba(241, 180, 109, 0.85), 0 0 23px rgba(214, 129, 77, 0.4);
+  transition: transform var(--dur-hover) var(--scene-ease), box-shadow var(--dur-hover) ease;
+  animation: ember-pulse 3.4s ease-in-out infinite;
+}
+
+@keyframes ember-pulse { 0%, 100% { opacity: 0.72; } 50% { opacity: 1; } }
+.fire-ember:hover > span, .fire-ember:focus-visible > span { transform: scale(1.34); box-shadow: 0 0 17px rgba(241, 180, 109, 1), 0 0 32px rgba(214, 129, 77, 0.55); }
+.fire-ember.is-opened { cursor: default; }
+.fire-ember.is-opened > span { background: rgba(120, 96, 84, 0.5); box-shadow: none; opacity: 0.4; animation: none; }
+
+.fire-slips {
+  position: absolute;
+  z-index: 8;
+  top: clamp(12rem, 24vh, 15rem);
+  right: clamp(1.15rem, 5vw, 5rem);
+  display: grid;
+  width: min(46rem, 54vw);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
+  gap: clamp(0.7rem, 1.6vw, 1.25rem);
+  pointer-events: none;
+}
+
+.fire-slip {
+  width: 100%;
+  border: 1px solid rgba(222, 215, 220, 0.18);
+  border-radius: 4px;
+  padding: 0.8rem 0.9rem;
+  background: linear-gradient(165deg, rgba(246, 240, 232, 0.95), rgba(230, 219, 210, 0.9));
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.36), 0 0 18px rgba(241, 180, 109, 0.08);
+  will-change: transform, opacity;
+}
+
+.fire-slip p { margin: 0; color: #40353a; font-family: var(--font-hand), "Segoe Script", cursive; font-size: clamp(0.96rem, 1.16vw, 1.12rem); font-weight: 500; line-height: 1.44; }
+.fire-slip.is-photo { display: grid; gap: 0.55rem; padding: 0.6rem 0.6rem 0.75rem; }
+.fire-slip.is-photo .memory-image { aspect-ratio: 1.2; background: rgba(31, 36, 48, 0.72); }
+.fire-slip.is-photo .memory-image img { object-fit: contain; }
+.fire-slip.is-photo p { font-size: 0.94rem; text-align: center; }
+
+.fire-flower-path {
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 20vh;
+  opacity: 0;
+  transition: opacity 2.4s var(--scene-ease);
+}
+.fire-scene.is-brighter .fire-flower-path { opacity: 0.36; }
+.fire-flower-path span {
+  position: absolute;
+  bottom: calc(7% + var(--i) * 11%);
+  left: calc(50% + (var(--i) - 3) * 6.5%);
+  width: calc(11px - var(--i) * 0.8px);
+  height: calc(11px - var(--i) * 0.8px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(234, 175, 196, 0.8) 0 32%, rgba(255, 241, 246, 0.24) 62%, transparent 64%);
+}
+
+.fire-complete {
+  position: absolute;
+  z-index: 17;
+  right: clamp(1.15rem, 5vw, 5rem);
+  bottom: calc(clamp(1.5rem, 4vw, 3rem) + 3.6rem);
+  display: grid;
+  width: min(28rem, calc(100% - 2.3rem));
+  gap: 1rem;
+  justify-items: end;
+}
+.fire-complete p { margin: 0; color: #f0ebef; font-family: var(--font-display), Georgia, serif; font-size: clamp(1.1rem, 1.8vw, 1.42rem); line-height: 1.48; text-align: right; text-shadow: 0 2px 22px rgba(0, 0, 0, 0.62); }
+
+@media (max-width: 900px) {
+  .fire-slips { top: 28vh; width: min(40rem, 66vw); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fire-person-left { left: 1%; }.fire-person-right { right: 1%; }
+}
+
+@media (max-width: 767px) {
+  .fire-scene { padding: 4.4rem 1.1rem 2rem; }
+  .fire-header { width: min(25rem, 100%); }
+  .fire-header .scene-title { font-size: clamp(2rem, 9vw, 2.6rem); }
+  .fire-horizon { bottom: 27vh; height: 19vh; }
+  .fire-ground { height: 35vh; }
+  .fire-figures { bottom: 5.3vh; width: min(410px, 98vw); height: 112px; }
+  .fire-person { width: 70px; height: 102px; transform-origin: bottom center; }
+  .fire-person-left { left: 1%; }.fire-person-right { right: 1%; }
+  .fire-person-head { top: 3px; left: 37px; width: 21px; height: 24px; }
+  .fire-person-left .fire-person-head::after { right: -6px; width: 10px; height: 20px; }
+  .fire-person-torso { top: 22px; left: 17px; width: 42px; height: 50px; }
+  .fire-person-arm { top: 47px; left: 8px; width: 37px; height: 11px; }
+  .fire-person-legs { width: 66px; height: 35px; }.fire-person-legs::after { width: 31px; height: 9px; }
+  .fire-pit { bottom: 6vh; width: min(285px, 68vw); height: 160px; }
+  .fire-glow { width: 450px; height: 450px; }.fire-stones { transform: translateX(-50%) scale(0.8); }.fire-logs { bottom: 26px; }
+  .fire-sparks span:nth-child(even) { display: none; }
+  .fire-slips { position: relative; top: auto; right: auto; width: 100%; grid-template-columns: 1fr; gap: 0.6rem; margin-top: 14rem; padding-bottom: 14rem; }
+  .fire-complete { position: relative; right: auto; bottom: auto; width: 100%; margin-top: 1rem; justify-items: stretch; }
+  .fire-complete p { text-align: left; }.fire-complete .scene-cta { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fire-clouds span, .fire-glow, .fire-flame, .fire-sparks span, .fire-ember > span { animation: none; }
+  .fire-ember:hover > span { transform: none; }
+}
+/* Faded personal-memory slots sit behind the moving cloud layer. The user's own
+   stage photos appear here when added, with a quiet neutral surface while empty. */
+.fire-scene .fire-sky { z-index: -7; }
+.fire-memory-haze {
+  position: absolute;
+  z-index: -6;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fire-memory {
+  position: absolute;
+  width: clamp(9rem, 15vw, 16rem);
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(235, 229, 232, 0.16);
+  background-color: rgba(99, 82, 91, 0.2);
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 20px 44px rgba(7, 9, 15, 0.28);
+  filter: blur(1.5px) grayscale(0.22) saturate(0.64);
+  opacity: 0.22;
+  transform-origin: center;
+  animation: memory-drift 24s ease-in-out infinite alternate;
+}
+
+.fire-memory::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 245, 236, 0.12), transparent 38%, rgba(14, 16, 25, 0.42));
+  content: "";
+}
+
+.memory-one { --memory-tilt: -8deg; top: 14%; left: 29%; transform: rotate(var(--memory-tilt)); }
+.memory-two { --memory-tilt: 7deg; top: 24%; right: 17%; transform: rotate(var(--memory-tilt)); animation-delay: -9s; }
+.memory-three { --memory-tilt: -4deg; top: 50%; left: 53%; width: clamp(7.5rem, 11vw, 12rem); transform: rotate(var(--memory-tilt)); animation-delay: -15s; }
+
+@keyframes memory-drift {
+  to { transform: translate3d(0, -8px, 0) rotate(var(--memory-tilt)); }
+}
+
+/* The scene layers are non-interactive, but every ember must remain a 48px target. */
+.fire-pit .fire-ember { pointer-events: auto; }
+
+@media (max-width: 767px) {
+  .fire-memory { filter: blur(1.2px) grayscale(0.32) saturate(0.52); opacity: 0.16; }
+  .memory-one { top: 18%; left: -8%; }
+  .memory-two { top: 30%; right: -16%; }
+  .memory-three { top: 48%; left: 33%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fire-memory { animation: none; }
+}
+/* The messages are the emotional centre of this scene, not a corner sidebar. */
+.fire-scene .fire-slips {
+  top: 50%;
+  right: auto;
+  left: 50%;
+  display: flex;
+  width: min(46rem, calc(100vw - 8rem));
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+}
+
+.fire-scene .fire-slip {
+  width: min(14.5rem, calc(50% - 0.7rem));
+}
+
+@media (max-width: 900px) {
+  .fire-scene .fire-slips {
+    width: min(40rem, calc(100vw - 4rem));
+  }
+}
+
+@media (max-width: 767px) {
+  .fire-scene .fire-slips {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    margin-top: 14rem;
+    transform: none;
+  }
+
+  .fire-scene .fire-slip { width: 100%; }
+}
