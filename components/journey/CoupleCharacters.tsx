@@ -3,8 +3,7 @@
 import { useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
 import { useEffect, useRef } from "react";
-import { journeyStages } from "../../data/journey";
-import { pointOnSegment } from "./journey-route";
+import { getStagePosition, pointOnSegment, type JourneyLayout } from "./journey-route";
 
 type CoupleCharactersProps = {
   /** Where the couple currently stands. */
@@ -12,90 +11,79 @@ type CoupleCharactersProps = {
   /** Where they are heading, or null when standing still. */
   toStage: number | null;
   onArrival: () => void;
+  layout?: JourneyLayout;
 };
 
-export function CoupleCharacters({ fromStage, toStage, onArrival }: CoupleCharactersProps) {
+export function CoupleCharacters({ fromStage, toStage, onArrival, layout = "desktop" }: CoupleCharactersProps) {
   const walkerRef = useRef<HTMLDivElement>(null);
   const figureRef = useRef<HTMLDivElement>(null);
-  // Kept in a ref so a new callback identity never restarts the walk mid-animation.
-  const arrivalRef = useRef(onArrival);
-  arrivalRef.current = onArrival;
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const walker = walkerRef.current;
     if (!walker) return;
 
-    const origin = journeyStages[fromStage - 1]?.position ?? journeyStages[0].position;
-
+    const origin = getStagePosition(fromStage, layout);
     const place = (x: number, y: number) => {
       walker.style.left = `${x}%`;
       walker.style.top = `${y}%`;
     };
 
-    // Standing still: sit exactly on the current node.
     if (toStage === null) {
       place(origin.x, origin.y);
       return;
     }
 
-    const target = journeyStages[toStage - 1]?.position ?? origin;
-
-    // Reduced motion replaces the walk with a short move (spec §25).
+    const target = getStagePosition(toStage, layout);
     if (reduceMotion) {
       place(target.x, target.y);
-      const timer = window.setTimeout(() => arrivalRef.current(), 400);
+      const timer = window.setTimeout(() => onArrival(), 400);
       return () => window.clearTimeout(timer);
     }
 
     const isForwardLeg = toStage === fromStage + 1;
-
     const context = gsap.context(() => {
-      // Walking forward traces the drawn leg; the couple and the road therefore use
-      // the same percentage coordinates and stay locked together at any aspect ratio.
       if (isForwardLeg) {
         const progress = { t: 0 };
         place(origin.x, origin.y);
-
         gsap.to(progress, {
           t: 1,
-          duration: 4.4,
+          duration: layout === "mobile" ? 1.6 : 4.4,
           ease: "power1.inOut",
           onUpdate: () => {
-            const point = pointOnSegment(fromStage, progress.t);
+            const point = pointOnSegment(fromStage, progress.t, layout);
             place(point.x, point.y);
           },
-          onComplete: () => arrivalRef.current(),
+          onComplete: () => onArrival(),
         });
       } else {
-        // Revisiting an earlier stage moves straight there.
         const position = { x: origin.x, y: origin.y };
         gsap.to(position, {
           x: target.x,
           y: target.y,
-          duration: 3.2,
+          duration: layout === "mobile" ? 1.2 : 3.2,
           ease: "power2.inOut",
           onUpdate: () => place(position.x, position.y),
-          onComplete: () => arrivalRef.current(),
+          onComplete: () => onArrival(),
         });
       }
 
-      // The bob is a separate element so it never fights the walk for position.
       gsap.to(figureRef.current, { y: -3, duration: 0.58, repeat: -1, yoyo: true, ease: "sine.inOut" });
     });
 
     return () => context.revert();
-  }, [fromStage, toStage, reduceMotion]);
+  }, [fromStage, toStage, reduceMotion, layout, onArrival]);
+
+  const firstPosition = getStagePosition(1, layout);
 
   return (
     <div
       ref={walkerRef}
       className={`map-walker${toStage !== null ? " is-walking" : ""}`}
-      style={{ left: `${journeyStages[0].position.x}%`, top: `${journeyStages[0].position.y}%` }}
+      style={{ left: `${firstPosition.x}%`, top: `${firstPosition.y}%` }}
       aria-hidden="true"
     >
       <div ref={figureRef} className="map-walker-figure">
-        {/* Small against the landscape and seen from behind (spec §9). */}
         <svg viewBox="-16 -22 32 34" className="couple-figures">
           <ellipse className="couple-shadow" cx="0" cy="10" rx="13" ry="2.6" />
           <circle cx="-5" cy="-15" r="4.2" />

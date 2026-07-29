@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 
 type MemoryModalProps = {
@@ -15,10 +16,7 @@ type MemoryModalProps = {
   children: ReactNode;
 };
 
-/**
- * One modal at a time (spec §22). Closes on Escape and on backdrop press, restores
- * focus to whatever opened it, and keeps Tab inside the dialog while open.
- */
+/** A single viewport-level dialog. Portalling avoids transformed scene layers trapping fixed mobile UI. */
 export function MemoryModal({ isOpen, onClose, eyebrow, title, tone = "", children }: MemoryModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
@@ -27,9 +25,29 @@ export function MemoryModal({ isOpen, onClose, eyebrow, title, tone = "", childr
   useEffect(() => {
     if (!isOpen) return;
 
+    const scrollY = window.scrollY;
+    const htmlOverflow = document.documentElement.style.overflow;
+    const bodyStyle = {
+      overflow: document.body.style.overflow,
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+    };
+    const journeyRoot = document.querySelector<HTMLElement>(".journey-root");
+    const wasInert = journeyRoot?.inert ?? false;
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    if (journeyRoot) journeyRoot.inert = true;
+
     restoreFocusRef.current = document.activeElement as HTMLElement | null;
     const panel = panelRef.current;
-    panel?.querySelector<HTMLElement>("[data-autofocus]")?.focus() ?? panel?.focus();
+    const autofocusTarget = panel?.querySelector<HTMLElement>("[data-autofocus]");
+    if (autofocusTarget) autofocusTarget.focus();
+    else panel?.focus();
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -39,7 +57,6 @@ export function MemoryModal({ isOpen, onClose, eyebrow, title, tone = "", childr
       }
 
       if (event.key !== "Tab" || !panelRef.current) return;
-
       const focusable = panelRef.current.querySelectorAll<HTMLElement>(
         'button, [href], video, input, select, textarea, [tabindex]:not([tabindex="-1"])',
       );
@@ -47,7 +64,6 @@ export function MemoryModal({ isOpen, onClose, eyebrow, title, tone = "", childr
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();
@@ -60,11 +76,20 @@ export function MemoryModal({ isOpen, onClose, eyebrow, title, tone = "", childr
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.documentElement.style.overflow = htmlOverflow;
+      document.body.style.overflow = bodyStyle.overflow;
+      document.body.style.position = bodyStyle.position;
+      document.body.style.top = bodyStyle.top;
+      document.body.style.width = bodyStyle.width;
+      if (journeyRoot) journeyRoot.inert = wasInert;
+      window.scrollTo(0, scrollY);
       restoreFocusRef.current?.focus();
     };
   }, [isOpen, onClose]);
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -72,9 +97,9 @@ export function MemoryModal({ isOpen, onClose, eyebrow, title, tone = "", childr
           initial={reduceMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: reduceMotion ? 0.12 : 0.42 }}
+          transition={{ duration: reduceMotion ? 0.12 : 0.28 }}
         >
-          <button type="button" className="memory-modal-scrim" onClick={onClose} aria-label="Đóng ký ức" />
+          <button type="button" className="memory-modal-scrim" onClick={onClose} aria-label="Đóng kỷ niệm" />
           <motion.div
             ref={panelRef}
             className="memory-modal-panel"
@@ -82,10 +107,10 @@ export function MemoryModal({ isOpen, onClose, eyebrow, title, tone = "", childr
             aria-modal="true"
             aria-label={title}
             tabIndex={-1}
-            initial={reduceMotion ? false : { opacity: 0, y: 26, scale: 0.965 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 18, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reduceMotion ? undefined : { opacity: 0, y: 18, scale: 0.97 }}
-            transition={{ duration: reduceMotion ? 0.14 : 0.68, ease: [0.22, 1, 0.36, 1] }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: 12, scale: 0.985 }}
+            transition={{ duration: reduceMotion ? 0.14 : 0.42, ease: [0.22, 1, 0.36, 1] }}
           >
             <button type="button" className="memory-modal-close" onClick={onClose} aria-label="Đóng" data-autofocus>
               <X size={18} weight="bold" />
@@ -96,6 +121,7 @@ export function MemoryModal({ isOpen, onClose, eyebrow, title, tone = "", childr
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

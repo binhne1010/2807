@@ -18,13 +18,8 @@ export function FinalMessage({ onRestart }: FinalMessageProps) {
   const [hasFinished, setHasFinished] = useState(reduceMotion ?? false);
 
   useEffect(() => {
-    if (reduceMotion) {
-      setHasFinished(true);
-      return;
-    }
-
-    // Matches the 620ms per-line cadence in LetterReveal, plus the reveal duration.
-    const total = finalMessageLines.length * 620 + 900;
+    // Scheduling even the reduced-motion completion avoids a synchronous render cascade.
+    const total = reduceMotion ? 0 : finalMessageLines.length * 620 + 900;
     const timer = window.setTimeout(() => setHasFinished(true), total);
     return () => window.clearTimeout(timer);
   }, [reduceMotion]);

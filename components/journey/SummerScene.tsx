@@ -22,7 +22,7 @@ type SummerMoment = {
 
 const summerMoments: SummerMoment[] = [
   { id: "cinema", title: "AEON và bọn mình", description: "làm trò con bò chụp ảnh cùng nhau khi ra về", photo: 1, kind: "video", fallback: "/images/memory-birthday-film.png" },
-  { id: "bench", title: "Ghế đá", description: "Sân vận động - valentine, anh tặng món quà cất công chuẩn bị cho người mình yêu nhất", photo: 2, kind: "image", fallback: "/images/memory-flower-field-film.png" },
+  { id: "bench", title: "Ghế đá", description: "Sân vận động - 8/3, anh tặng món quà cất công chuẩn bị cho người mình yêu nhất", photo: 2, kind: "image", fallback: "/images/memory-flower-field-film.png" },
   { id: "food", title: "cắt tóc đi villa", description: "Ẻm muốn cắt tóc đi villa, anh dẫn em đi cắt để có ảnh đẹp về khoe anh", photo: 3, kind: "image", fallback: "/images/memory-birthday-film.png" },
   { id: "camera", title: "đáng yêu", description: "Chụp trộm vì quá dễ thương với chiếc bờm", photo: 4, kind: "image", fallback: "/images/memory-flower-field-film.png" },
   { id: "ice-cream", title: "Cây kem xinh nhất", description: "Xinh nhất khi mặc bộ quần áo anh chọn cho bé =", photo: 5, kind: "image", fallback: "/images/memory-moc-chau-film.png" },

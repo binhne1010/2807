@@ -28,11 +28,15 @@ export function useBackgroundAudio(src: string | null, shouldPlay: boolean) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isEnabled, setIsEnabled] = useState(false);
   const isEnabledRef = useRef(false);
-  isEnabledRef.current = isEnabled;
+  useEffect(() => {
+    isEnabledRef.current = isEnabled;
+  }, [isEnabled]);
 
   // The user's start gesture enables sound; after that each stage swaps its track.
   useEffect(() => {
-    if (shouldPlay) setIsEnabled(true);
+    if (!shouldPlay) return;
+    const timer = window.setTimeout(() => setIsEnabled(true), 0);
+    return () => window.clearTimeout(timer);
   }, [shouldPlay]);
 
   useEffect(() => {

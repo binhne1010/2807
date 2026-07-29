@@ -1,6 +1,7 @@
 import { journeyStages } from "../../data/journey";
 
 type Point = { x: number; y: number };
+export type JourneyLayout = "desktop" | "mobile";
 
 /**
  * Converts a Catmull-Rom spline through the stage nodes into cubic bezier segments.
@@ -22,29 +23,41 @@ function toBezierControlPoints(points: Point[], index: number) {
 }
 
 const nodePoints: Point[] = journeyStages.map((stage) => stage.position);
-
 const round = (value: number) => Math.round(value * 100) / 100;
+
+/** A dedicated vertical rhythm for phones instead of a squeezed desktop route. */
+const toMobilePoint = ({ x, y }: Point): Point => ({
+  x: round(50 + (50 - y) * 1.25),
+  y: round(6 + ((x - 17) / 76) * 88),
+});
+
+export const mobileNodePoints: Point[] = nodePoints.map(toMobilePoint);
 
 /** Control points per leg, in the same 0-100 percentage space as the node positions. */
 export const routeSegmentPoints = nodePoints
   .slice(0, -1)
   .map((_, index) => toBezierControlPoints(nodePoints, index));
 
-/** One path string per leg of the journey. Segment k joins stage k to stage k+1. */
-export const routeSegments: string[] = routeSegmentPoints.map(({ start, end, control1, control2 }) => {
+export const mobileRouteSegmentPoints = mobileNodePoints
+  .slice(0, -1)
+  .map((_, index) => toBezierControlPoints(mobileNodePoints, index));
+
+function segmentToPath({ start, end, control1, control2 }: ReturnType<typeof toBezierControlPoints>) {
   return `M ${round(start.x)} ${round(start.y)} C ${round(control1.x)} ${round(control1.y)}, ${round(control2.x)} ${round(
     control2.y,
   )}, ${round(end.x)} ${round(end.y)}`;
-});
+}
 
-/**
- * Position along a leg at t (0-1), returned as percentages of the map.
- * Used to walk the couple in the same coordinate space the road is drawn in,
- * which an SVG viewBox cannot guarantee once the canvas stops being square.
- */
-export function pointOnSegment(segment: number, t: number): Point {
-  const points = routeSegmentPoints[segment - 1];
-  if (!points) return nodePoints[0];
+/** One path string per leg of the journey. Segment k joins stage k to stage k+1. */
+export const routeSegments: string[] = routeSegmentPoints.map(segmentToPath);
+export const mobileRouteSegments: string[] = mobileRouteSegmentPoints.map(segmentToPath);
+
+/** Position along a leg at t (0-1), in the active map coordinate space. */
+export function pointOnSegment(segment: number, t: number, layout: JourneyLayout = "desktop"): Point {
+  const segmentPoints = layout === "mobile" ? mobileRouteSegmentPoints : routeSegmentPoints;
+  const fallbackPoints = layout === "mobile" ? mobileNodePoints : nodePoints;
+  const points = segmentPoints[segment - 1];
+  if (!points) return fallbackPoints[0];
 
   const { start, control1, control2, end } = points;
   const inverse = 1 - t;
@@ -59,16 +72,23 @@ export function pointOnSegment(segment: number, t: number): Point {
   };
 }
 
-/** The full road, used for the faint base line under the progress line. */
-export const fullRoute: string = nodePoints
-  .slice(0, -1)
-  .reduce((path, _, index) => {
-    const { start, end, control1, control2 } = toBezierControlPoints(nodePoints, index);
-    const head = index === 0 ? `M ${round(start.x)} ${round(start.y)} ` : "";
-    return `${path}${head}C ${round(control1.x)} ${round(control1.y)}, ${round(control2.x)} ${round(control2.y)}, ${round(
-      end.x,
-    )} ${round(end.y)} `;
-  }, "")
-  .trim();
+function buildFullRoute(points: Point[]) {
+  return points
+    .slice(0, -1)
+    .reduce((path, _, index) => {
+      const segment = toBezierControlPoints(points, index);
+      const head = index === 0 ? `M ${round(segment.start.x)} ${round(segment.start.y)} ` : "";
+      return `${path}${head}${segmentToPath(segment).replace(/^M [^C]+C /, "C ")} `;
+    }, "")
+    .trim();
+}
+
+export const fullRoute = buildFullRoute(nodePoints);
+export const mobileFullRoute = buildFullRoute(mobileNodePoints);
+
+export function getStagePosition(stage: number, layout: JourneyLayout): Point {
+  const positions = layout === "mobile" ? mobileNodePoints : nodePoints;
+  return positions[stage - 1] ?? positions[0];
+}
 
 export const segmentId = (segment: number) => `journey-segment-${segment}`;

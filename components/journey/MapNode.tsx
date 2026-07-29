@@ -8,8 +8,7 @@ type MapNodeProps = {
   stage: JourneyStage;
   status: NodeStatus;
   isSelected: boolean;
-  /** Completed stages can be revisited once the whole journey is finished. */
-  isReplayable: boolean;
+  position?: { x: number; y: number };
   onSelect: (stage: number) => boolean;
 };
 
@@ -20,15 +19,15 @@ const statusLabel: Record<NodeStatus, string> = {
   completed: "Đã đi qua",
 };
 
-export function MapNode({ stage, status, isSelected, isReplayable, onSelect }: MapNodeProps) {
-  const isOpenable = status === "available" || (status === "completed" && isReplayable);
+export function MapNode({ stage, status, isSelected, onSelect, position = stage.position }: MapNodeProps) {
+  const isOpenable = status === "available" || status === "completed";
 
   return (
     <button
       type="button"
       className={`map-node is-${status}${isSelected ? " is-selected" : ""}`}
       data-stage={stage.order}
-      style={{ left: `${stage.position.x}%`, top: `${stage.position.y}%` }}
+      style={{ left: `${position.x}%`, top: `${position.y}%` }}
       disabled={!isOpenable}
       onClick={() => onSelect(stage.order)}
       aria-label={`Chặng ${stage.order}: ${stage.title}. ${statusLabel[status]}.`}

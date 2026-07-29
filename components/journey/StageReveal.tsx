@@ -21,7 +21,10 @@ type StageRevealProps = {
 export function StageReveal({ stage, x, y, title, subtitle, onDone }: StageRevealProps) {
   const reduceMotion = useReducedMotion();
   const doneRef = useRef(onDone);
-  doneRef.current = onDone;
+
+  useEffect(() => {
+    doneRef.current = onDone;
+  }, [onDone]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => doneRef.current(), reduceMotion ? 260 : 1750);

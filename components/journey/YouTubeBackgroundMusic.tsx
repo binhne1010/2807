@@ -16,6 +16,7 @@ type YouTubeBackgroundMusicProps = {
 
 export function YouTubeBackgroundMusic({ isEnabled, isSuspended }: YouTubeBackgroundMusicProps) {
   const playerRef = useRef<HTMLIFrameElement>(null);
+  const wantsAudioRef = useRef(false);
   const [isReady, setIsReady] = useState(false);
 
   const sendCommand = useCallback((func: string, args: unknown[] = []) => {
@@ -26,22 +27,22 @@ export function YouTubeBackgroundMusic({ isEnabled, isSuspended }: YouTubeBackgr
   }, []);
 
   const playWithSound = useCallback(() => {
-    if (!isReady) return;
+    wantsAudioRef.current = true;
+    // Commands are also sent before readiness: the YouTube frame can receive the gesture directly.
     sendCommand("setVolume", [32]);
     sendCommand("unMute");
     sendCommand("playVideo");
-  }, [isReady, sendCommand]);
+  }, [sendCommand]);
 
   const pauseAndMute = useCallback(() => {
-    if (!isReady) return;
+    wantsAudioRef.current = false;
     sendCommand("pauseVideo");
     sendCommand("mute");
-  }, [isReady, sendCommand]);
+  }, [sendCommand]);
 
   useEffect(() => {
     function handlePlayerMessage(event: MessageEvent) {
       if (event.origin !== PLAYER_ORIGIN || event.source !== playerRef.current?.contentWindow) return;
-
       try {
         const message = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
         if (message?.event === "onReady") setIsReady(true);
@@ -66,7 +67,6 @@ export function YouTubeBackgroundMusic({ isEnabled, isSuspended }: YouTubeBackgr
   }, [pauseAndMute, playWithSound]);
 
   useEffect(() => {
-    if (!isReady) return;
     if (isEnabled && !isSuspended) {
       playWithSound();
       return;
@@ -74,16 +74,18 @@ export function YouTubeBackgroundMusic({ isEnabled, isSuspended }: YouTubeBackgr
     pauseAndMute();
   }, [isEnabled, isReady, isSuspended, pauseAndMute, playWithSound]);
 
+
   return (
     <iframe
       ref={playerRef}
       title="Nhạc nền Nơi này có anh"
       src={`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=0&mute=1&loop=1&playlist=${VIDEO_ID}&controls=0&playsinline=1&rel=0&enablejsapi=1`}
       allow="autoplay; encrypted-media"
-      onLoad={() => window.setTimeout(() => setIsReady(true), 650)}
+      suppressHydrationWarning
+      onLoad={() => window.setTimeout(() => setIsReady(true), 450)}
       tabIndex={-1}
       aria-hidden="true"
-      style={{ position: "fixed", width: 200, height: 200, right: -240, bottom: -240, border: 0, opacity: 0, pointerEvents: "none" }}
+      style={{ position: "fixed", width: 1, height: 1, right: -2, bottom: -2, border: 0, opacity: 0, pointerEvents: "none" }}
     />
   );
 }

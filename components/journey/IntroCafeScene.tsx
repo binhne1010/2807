@@ -17,7 +17,7 @@ export function IntroCafeScene({ onOpenMap }: IntroCafeSceneProps) {
     if (isOpening) return;
     window.dispatchEvent(new Event(BACKGROUND_MUSIC_REQUEST));
     setIsOpening(true);
-    window.setTimeout(onOpenMap, reduceMotion ? 80 : 1480);
+    onOpenMap();
   }
 
   const reveal = (delay: number) => ({
@@ -46,7 +46,7 @@ export function IntroCafeScene({ onOpenMap }: IntroCafeSceneProps) {
 
       <motion.div className="cafe-content" animate={isOpening ? { opacity: 0, y: -14 } : { opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
         <motion.p className="scene-date" {...reveal(1.05)}>28.07.2026</motion.p>
-        <motion.h1 {...reveal(0.55)}>Chào mừng em.</motion.h1>
+        <motion.h1 {...reveal(0.55)}>Chào Mừng Cún</motion.h1>
         <motion.p className="scene-intro" {...reveal(0.82)}>Thạch Mộc là nơi câu chuyện của chúng ta bắt đầu.</motion.p>
         <motion.p className="scene-letter" {...reveal(1.28)}>Trước khi mở món quà sinh nhật, em hãy cùng anh đi lại hành trình của chúng ta nhé.</motion.p>
         <motion.button

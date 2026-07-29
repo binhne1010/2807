@@ -31,8 +31,8 @@ export function useJourneyState() {
 
   /** A stage opens when it is the current one, or when the whole journey is done and it was visited. */
   const isStageAvailable = useCallback(
-    (stage: number) => stage === state.currentStage || (hasFinishedJourney && state.completedStages.includes(stage)),
-    [hasFinishedJourney, state.completedStages, state.currentStage],
+    (stage: number) => stage === state.currentStage || state.completedStages.includes(stage),
+    [state.completedStages, state.currentStage],
   );
 
   const openMap = useCallback(() => {

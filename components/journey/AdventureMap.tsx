@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { journeyStages } from "../../data/journey";
 import type { JourneyState } from "../../hooks/useJourneyState";
 import { CoupleCharacters } from "./CoupleCharacters";
@@ -10,6 +10,7 @@ import { MapNode } from "./MapNode";
 import { MapPath } from "./MapPath";
 import { MapWorld } from "./MapWorld";
 import { StageReveal } from "./StageReveal";
+import { getStagePosition, type JourneyLayout } from "./journey-route";
 
 type AdventureMapProps = {
   state: JourneyState;
@@ -18,6 +19,23 @@ type AdventureMapProps = {
   onBeginStageTravel: (stage: number) => boolean;
   onArriveAtStage: (stage: number) => void;
 };
+
+const mobileMapQuery = "(max-width: 767px)";
+
+function subscribeToMobileMap(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => undefined;
+  const query = window.matchMedia(mobileMapQuery);
+  query.addEventListener("change", onStoreChange);
+  return () => query.removeEventListener("change", onStoreChange);
+}
+
+function getMobileMapSnapshot() {
+  return typeof window !== "undefined" && window.matchMedia(mobileMapQuery).matches;
+}
+
+function getMobileMapServerSnapshot() {
+  return false;
+}
 
 export function AdventureMap({
   state,
@@ -30,6 +48,8 @@ export function AdventureMap({
   const [travellingTo, setTravellingTo] = useState<number | null>(null);
   /** The stage whose photograph is currently opening over the map. */
   const [revealStage, setRevealStage] = useState<number | null>(null);
+  const isMobileMap = useSyncExternalStore(subscribeToMobileMap, getMobileMapSnapshot, getMobileMapServerSnapshot);
+  const layout: JourneyLayout = isMobileMap ? "mobile" : "desktop";
 
   /** Where the couple stands: the furthest stage already reached. */
   const standingAt = state.completedStages.length > 0 ? Math.max(...state.completedStages) : 1;
@@ -91,17 +111,17 @@ export function AdventureMap({
         <div className="map-viewport">
           <div className="map-canvas">
             <div className="map-paper" aria-hidden="true" />
-            <MapWorld completedStages={state.completedStages} currentStage={state.currentStage} />
+            <MapWorld completedStages={state.completedStages} currentStage={state.currentStage} layout={layout} />
             <div className="map-tint" aria-hidden="true" />
-            <MapPath completedStages={state.completedStages} travellingSegment={travellingTo ? travellingTo - 1 : null} />
-            <CoupleCharacters fromStage={standingAt} toStage={travellingTo} onArrival={handleArrival} />
+            <MapPath completedStages={state.completedStages} travellingSegment={travellingTo ? travellingTo - 1 : null} layout={layout} />
+            <CoupleCharacters fromStage={standingAt} toStage={travellingTo} onArrival={handleArrival} layout={layout} />
             {journeyStages.map((stage) => (
               <MapNode
                 key={stage.id}
                 stage={stage}
+                position={getStagePosition(stage.order, layout)}
                 status={getStatus(stage.order)}
                 isSelected={travellingTo === stage.order || state.currentStage === stage.order}
-                isReplayable={hasFinishedJourney}
                 onSelect={beginStage}
               />
             ))}
@@ -112,8 +132,8 @@ export function AdventureMap({
       {revealStage !== null && journeyStages[revealStage - 1] && (
         <StageReveal
           stage={revealStage}
-          x={journeyStages[revealStage - 1].position.x}
-          y={journeyStages[revealStage - 1].position.y}
+          x={isMobileMap ? 50 : getStagePosition(revealStage, layout).x}
+          y={isMobileMap ? 50 : getStagePosition(revealStage, layout).y}
           title={journeyStages[revealStage - 1].title}
           subtitle={journeyStages[revealStage - 1].subtitle}
           onDone={handleRevealDone}

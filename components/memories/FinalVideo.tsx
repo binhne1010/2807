@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useRef, useState } from "react";
 import { finalVideoSrc } from "../../data/journey";
 import { MemoryVideo } from "./MemoryVideo";
 
@@ -12,23 +11,9 @@ type FinalVideoProps = {
   onPlayStateChange: (isPlaying: boolean) => void;
 };
 
-/**
- * The video never autoplays. Once it is playing the surrounding controls step back
- * and nothing navigates away on its own.
- */
+/** The preceding gift CTA is the user gesture; the recording starts as soon as this view opens. */
 export function FinalVideo({ onFinished, onPlayStateChange }: FinalVideoProps) {
-  const [hasStarted, setHasStarted] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-
-  function startVideo() {
-    setHasStarted(true);
-    onPlayStateChange(true);
-    // Give the element a frame to mount before asking it to play.
-    requestAnimationFrame(() => {
-      wrapperRef.current?.querySelector("video")?.play().catch(() => undefined);
-    });
-  }
 
   function handleEnded() {
     onPlayStateChange(false);
@@ -37,35 +22,25 @@ export function FinalVideo({ onFinished, onPlayStateChange }: FinalVideoProps) {
   }
 
   return (
-    <div className={`final-video${hasStarted ? " is-playing" : ""}`}>
-      {!hasStarted ? (
-        <motion.div
-          className="final-video-invite"
-          initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0.15 : 1.1, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="scene-eyebrow">Món quà của anh</p>
-          <h2 className="scene-title">Có vài điều anh muốn tự mình nói với em.</h2>
-          <button type="button" className="scene-cta" onClick={startVideo}>
-            Xem video
-          </button>
-        </motion.div>
-      ) : (
-        <motion.div
-          ref={wrapperRef}
-          className="final-video-frame"
-          initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: reduceMotion ? 0.15 : 1, ease: [0.22, 1, 0.36, 1] }}
+    <div className="final-video is-playing">
+      <motion.div
+        className="final-video-frame"
+        initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: reduceMotion ? 0.15 : 1, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <MemoryVideo
+          stage={8}
+          src={finalVideoSrc}
+          className="final-video-player"
+          onPlay={() => onPlayStateChange(true)}
+          onPause={() => onPlayStateChange(false)}
           onEnded={handleEnded}
-        >
-          <MemoryVideo stage={8} src={finalVideoSrc} className="final-video-player" />
-          <button type="button" className="final-video-skip" onClick={handleEnded}>
-            Đọc lời chúc cuối
-          </button>
-        </motion.div>
-      )}
+        />
+        <button type="button" className="final-video-skip" onClick={handleEnded}>
+          Đọc lời chúc cuối
+        </button>
+      </motion.div>
     </div>
   );
 }

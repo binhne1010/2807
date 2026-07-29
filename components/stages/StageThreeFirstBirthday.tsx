@@ -54,8 +54,8 @@ const roomObjects: RoomObject[] = [
     eyebrow: "Ngoài cửa sổ",
     kind: "window",
     lines: [
-      "trước khi ăn, Anh và Cún ra ngoài đi một vòng. cùng vui đàu vs nhau tại homestay cười nói nhưu một cặp vợ chồng mới cưới ",
-      "sau đó là hơi ấm bên nồi lẩu. từ từ thưởng thức nói chuyện vui vẻ chụp cùng nhau những tấm hình, Cún rất đáng yêu trong bộ quần áo của anh cùng thư giãn vs nhau đên tận khuya",
+      "trước khi ăn, Anh và Cún ra ngoài đi một vòng. Cùng đi dạo vui chơi nói chuyện mua đồ uống rồi nghịch những trò chơi ở đó khoảng thời gian đó thực sự rất quý giá với anh  ",
+      "sau đó là hơi ấm bên nồi lẩu. từ từ thưởng thức nói chuyện vui vẻ chụp cùng nhau những tấm hình, Cún đáng yêu trong bộ quần áo của anh cùng thư giãn vs nhau đên tận khuya",
       "Kỉ niệm đó anh không bao giừo quên khảong thời gian và bình yên vui vẻ tình yêu đong đầy quên đi những cãi vã trước đó",
     ],
   },

@@ -49,13 +49,24 @@ export function JourneyExperience() {
   function toggleMusic() {
     const willEnableMusic = !state.musicEnabled;
     setMusicEnabled(willEnableMusic);
+    if (willEnableMusic) setIsVideoAudible(false);
     window.dispatchEvent(new Event(willEnableMusic ? BACKGROUND_MUSIC_REQUEST : BACKGROUND_MUSIC_STOP));
   }
+  function returnToJourneyMap() {
+    setIsVideoAudible(false);
+    returnToMap();
+  }
+
+  function finishStage(stage: number) {
+    setIsVideoAudible(false);
+    completeStage(stage);
+  }
+
   /** Each stage returns to the map or unlocks the next one. */
   function renderStage(stage: number): ReactNode {
     const stageProps = {
-      onReturnToMap: returnToMap,
-      onComplete: () => completeStage(stage),
+      onReturnToMap: returnToJourneyMap,
+      onComplete: () => finishStage(stage),
     };
 
     switch (stage) {
@@ -76,7 +87,7 @@ export function JourneyExperience() {
       case 8:
         return (
           <StageEightBirthdayField
-            onReturnToMap={returnToMap}
+            onReturnToMap={returnToJourneyMap}
             onRestart={restartJourney}
             onDuckMusic={() => undefined}
           />

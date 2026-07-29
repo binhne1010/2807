@@ -1,22 +1,20 @@
 import { journeyStages } from "../../data/journey";
+import { getStagePosition, type JourneyLayout } from "./journey-route";
 
 type MapWorldProps = {
   completedStages: number[];
   currentStage: number;
+  layout?: JourneyLayout;
 };
 
-/**
- * The eight regions of the map. Each carries its own landscape motif, and the
- * light shifts across the map: bright and green at the start, cold in the middle,
- * dark near the end, dawn pink at the last stage (spec §8).
- */
-export function MapWorld({ completedStages, currentStage }: MapWorldProps) {
+export function MapWorld({ completedStages, currentStage, layout = "desktop" }: MapWorldProps) {
   return (
     <div className="map-world" aria-hidden="true">
       {journeyStages.map((stage) => {
         const isCompleted = completedStages.includes(stage.order);
         const isCurrent = stage.order === currentStage && !isCompleted;
         const isLocked = !isCompleted && !isCurrent;
+        const position = getStagePosition(stage.order, layout);
 
         return (
           <div
@@ -24,11 +22,10 @@ export function MapWorld({ completedStages, currentStage }: MapWorldProps) {
             className={`map-region region-${stage.id}${isCompleted ? " is-completed" : ""}${
               isCurrent ? " is-current" : ""
             }${isLocked ? " is-locked" : ""}`}
-            style={{ left: `${stage.position.x}%`, top: `${stage.position.y}%` }}
+            style={{ left: `${position.x}%`, top: `${position.y}%` }}
           >
             <span className="region-terrain" />
             <span className="region-motif" />
-            {/* Unopened land stays under fog; finished land keeps a small bloom. */}
             <span className="region-fog" />
             <span className="region-bloom" />
           </div>

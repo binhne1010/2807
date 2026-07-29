@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, type ComponentPropsWithoutRef } from "react";
 import { stageArtwork } from "../../data/journey";
 import { StageVideoPlayer } from "./StageVideoPlayer";
 
@@ -11,10 +11,13 @@ type MemoryVideoProps = {
   /** Explicit source overrides the per-stage convention (used by the final video). */
   src?: string;
   poster?: string;
+  onPlay?: ComponentPropsWithoutRef<"video">["onPlay"];
+  onPause?: ComponentPropsWithoutRef<"video">["onPause"];
+  onEnded?: ComponentPropsWithoutRef<"video">["onEnded"];
 };
 
 /** A memory video starts as it enters view and hands sound back to the journey music when it leaves. */
-export function MemoryVideo({ stage, className = "", src, poster }: MemoryVideoProps) {
+export function MemoryVideo({ stage, className = "", src, poster, onPlay, onPause, onEnded }: MemoryVideoProps) {
   const [unavailable, setUnavailable] = useState(false);
   const artwork = poster ?? stageArtwork[stage] ?? stageArtwork[1];
   const source = src ?? `/memories/stage-${stage}/video-01.mp4`;
@@ -34,6 +37,9 @@ export function MemoryVideo({ stage, className = "", src, poster }: MemoryVideoP
       poster={artwork}
       source={source}
       onError={() => setUnavailable(true)}
+      onPlay={onPlay}
+      onPause={onPause}
+      onEnded={onEnded}
     >
       Trình duyệt này không hỗ trợ phát video.
     </StageVideoPlayer>

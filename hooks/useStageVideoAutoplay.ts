@@ -9,7 +9,7 @@ function tellJourney(eventName: string) {
   window.dispatchEvent(new Event(eventName));
 }
 
-/** Plays a visible memory video and coordinates its sound with the background track. */
+/** Plays a visible memory video and only ducks the background track while that video is truly audible. */
 export function useStageVideoAutoplay() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -24,8 +24,8 @@ export function useStageVideoAutoplay() {
 
   const stopVideo = useCallback(() => {
     const video = videoRef.current;
-    if (!video) return;
-    video.pause();
+    video?.pause();
+    // Always emit the stop signal, including when an exiting scene already removed its video node.
     tellJourney(STAGE_VIDEO_AUDIO_STOP);
   }, []);
 
@@ -38,11 +38,11 @@ export function useStageVideoAutoplay() {
       await video.play();
       syncAudio();
     } catch {
-      // A browser may refuse unmuted autoplay until a user gesture. In that
-      // case the memory still starts muted and the background track keeps playing.
+      // If audible autoplay is blocked, play muted and immediately release the background music.
       video.muted = true;
       try {
         await video.play();
+        tellJourney(STAGE_VIDEO_AUDIO_STOP);
       } catch {
         tellJourney(STAGE_VIDEO_AUDIO_STOP);
       }
@@ -55,11 +55,8 @@ export function useStageVideoAutoplay() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.56) {
-          void playVideo();
-        } else {
-          stopVideo();
-        }
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.56) void playVideo();
+        else stopVideo();
       },
       { threshold: [0, 0.56] },
     );
